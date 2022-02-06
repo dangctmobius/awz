@@ -43,3 +43,13 @@ Route::group([
     Route::get('/list', [PostController::class, 'index']);   
     Route::post('/add', [PostController::class, 'store']);   
 });
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'user'
+
+], function ($router) {
+    Route::get('/post', [UserController::class, 'listPost']);   
+    Route::get('/info', [UserController::class, 'info']);   
+});

@@ -37,7 +37,7 @@ class AuthController extends Controller
         if ( ! $user) {
             $user = User::create(array_merge(
                 $validator->validated(),
-                ['password' => bcrypt($this->password), 'name' => env('APP_NAME').rand(10000,99999)]
+                ['password' => bcrypt($this->password), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
             ));
         }
         VerificationCode::send($email);
