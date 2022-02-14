@@ -3,17 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Comment;
 class CommentController extends Controller
-{
+{   
+
+    private $user;
+    public function __construct()
+    {
+        $this->user = auth()->user();
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+    }
+
+    public function get_comment_by_post_id(Request $request, $post_id)
+    {
+
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $user_id = $this->user->id;
+
+        $comments = Comment::where('post_id', $post_id)->with('user')->orderBy('id','desc')->skip($page*$limit )->take($limit)->get();
+        
+        $data = [];
+        $data['count'] = Comment::count();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $comments;
+        return $this->responseOK($data);
     }
 
     /**
@@ -34,7 +57,39 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'body'   => 'required',
+        ];
+        $messages = [
+            'body.required'   => __('Yêu cầu điền nội dung bình luận'),
+        ];
+        $validator = \Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            return $this->respondWithErrorMessage($validator);
+        }
+
+        $now = \Carbon\Carbon::now();
+        $now_format = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+        $rand = rand(1000, 9999);
+        $user_id = $this->user->id;
+        $body = $request->body;
+        $data = [
+        'body' => $body ?? 'Comment',
+        'user_id' => $user_id ?? 1,
+        'parent_id' => $request->parent_id,
+        'post_id' => $request->post_id,
+        'created_at' => time()
+        ];
+
+        $insertId = Comment::insertGetId($data);
+        $comment = Comment::where('id', $insertId)->first();
+        $data = [];
+        $data['item'] = $comment;
+        if($comment) {
+            return $this->responseOK($data, 'success');
+        } else {
+            return $this->responseError();
+        }
     }
 
     /**

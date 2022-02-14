@@ -11,6 +11,8 @@ class Comment extends Model
     use HasFactory;
     use SoftDeletes;
    
+    public $timestamps = TRUE;
+    
     protected $dates = ['deleted_at'];
    
     /**
@@ -28,6 +30,11 @@ class Comment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
     }
    
     /**

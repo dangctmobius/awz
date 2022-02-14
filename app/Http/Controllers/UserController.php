@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Post;
 
 class UserController extends Controller
 {
@@ -19,14 +21,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function listPost()
+    public function listPost(Request $request)
     {
-        return;
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $user_id = $this->user->id;
+        $data = [];
+        $data['total'] = Post::count();
+        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments')->with('user')->skip($page*$limit )->take($limit)->get();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $products;
+        return $this->responseOK($data);
     }
 
     public function info(Request $request)
-    {
-        return $this->user;   
+
+    {   $user = User::withCount('posts')->find($this->user->id);
+        return $this->responseOk($user);
     }
 
     /**

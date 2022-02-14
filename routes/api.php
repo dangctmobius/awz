@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -44,12 +46,21 @@ Route::group([
     Route::post('/add', [PostController::class, 'store']);   
 });
 
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'comment'
+
+], function ($router) {
+    Route::get('/list/{post_id}', [CommentController::class, 'get_comment_by_post_id']);   
+    Route::post('/add', [CommentController::class, 'store']);   
+});
+
 
 Route::group([
     'middleware' => 'api',
     'prefix' => 'user'
 
 ], function ($router) {
-    Route::get('/post', [UserController::class, 'listPost']);   
+    Route::get('/posts', [UserController::class, 'listPost']);   
     Route::get('/info', [UserController::class, 'info']);   
 });
