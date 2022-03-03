@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CommentController;;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SystemController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -64,3 +66,12 @@ Route::group([
     Route::get('/posts', [UserController::class, 'listPost']);   
     Route::get('/info', [UserController::class, 'info']);   
 });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'system'
+
+], function ($router) {
+    Route::get('/app_version', [SystemController::class, 'app_version']);   
+});
+
