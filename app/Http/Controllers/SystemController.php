@@ -29,7 +29,7 @@ class SystemController extends Controller
      */
     public function app_version()
     {
-        return $this->responseOK('1.0.1', 'success');
+        return $this->responseOK('1.0.2', 'success');
     }
 
     /**

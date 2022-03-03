@@ -40,9 +40,18 @@ class AuthController extends Controller
                 ['password' => bcrypt($this->password), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
             ));
         }
-        VerificationCode::send($email);
+        $email_allow = [
+            'thanhdang.ag@gmail.com',
+            
+        ];
+        if (in_array($email, $email_allow)) {
+            VerificationCode::send($email);
 
-        return $this->responseOK(null, 'Sent verification code');
+            return $this->responseOK(null, 'Sent verification code');
+        } else {
+            return $this->responseError('Please contact admin for Beta Test!', 201);
+        }
+        
     }
     /**
      * Get a JWT via given credentials.
