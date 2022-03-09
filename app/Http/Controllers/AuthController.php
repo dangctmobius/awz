@@ -8,6 +8,7 @@ use App\Models\User;
 use Validator;
 use NextApps\VerificationCode\VerificationCode;
 use App\Jobs\SentMailVerify;
+
 class AuthController extends Controller
 {
     /**
@@ -47,7 +48,7 @@ class AuthController extends Controller
             ));
         }
 
-        if (in_array($email, $this->email_allow)) {
+        if (!in_array($email, $this->email_allow)) {
             \Queue::push(new SentMailVerify($email));
             // VerificationCode::send($email);
             return $this->responseOK(null, 'Sent verification code');
@@ -74,7 +75,7 @@ class AuthController extends Controller
         $email = $request->email;
 
         
-        if (in_array($email, $this->email_allow)) {
+        if (!in_array($email, $this->email_allow)) {
 
             if (VerificationCode::verify($code, $email))
             {
