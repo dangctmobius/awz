@@ -17,5 +17,8 @@ use App\Http\Controllers\VerifyEmailCodeController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('login', function () {
+    return response()->json(['error'=> 'Not Authencation']);
+})->name('login');
 
 Route::get('/verify/{email}', [VerifyEmailCodeController::class, 'verify']);

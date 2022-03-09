@@ -12,7 +12,7 @@ class UserController extends Controller
 
     protected $user;
     public function __construct() {
-        $this->middleware('auth:api');
+        $this->middleware(['check_token','auth:api']);
         $this->user = auth()->user();
     }
 
@@ -91,9 +91,43 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $name = $request->name;
+        $phone = $request->phone;
+        $now = \Carbon\Carbon::now();
+        $now_format = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+        $rand = rand(1000, 9999);
+        $user_id = $this->user->id;
+        if(($request->file("image"))!=null)
+        {
+            $photo = $request->file("image");
+            $ext = $photo->getClientOriginalExtension();
+            $fileName = $now->year.$now->month.$now->day.'_'.$user_id.'_'.$rand . '.' .$ext;
+            $thumbSm = 'thumb_sm_' . $rand . '.' .$ext;
+            $image = Image::make($photo->getRealPath());
+            \Storage::disk('s3')->put('images/users'.'/'.$fileName,$image->encode(),'public');
+
+        }
+        $data = [
+        'name' => $name ?? 'Không tên',
+        'phone' => $phone ?? 'Không tên'
+        ];
+
+        if(isset($fileName))  {
+            $data['avatar'] = env('AWS_URL').'images/users/'.$fileName;
+         }else{
+            $data['avatar']= env('AWS_URL').'storage/images/products/460325024.png';
+         }
+        $update = User::where('id', $user_id)->update($data);
+        $user = User::where('id', $user_id)->first();
+        $data = [];
+        $data['item'] = $user;
+        if($user) {
+            return $this->responseOK($data, 'success');
+        } else {
+            return $this->responseError();
+        }
     }
 
     /**

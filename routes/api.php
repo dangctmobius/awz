@@ -44,8 +44,8 @@ Route::group([
     'prefix' => 'post'
 
 ], function ($router) {
-    Route::get('/list', [PostController::class, 'index']);   
-    Route::post('/add', [PostController::class, 'store']);   
+    Route::get('/list', [PostController::class, 'index'])->middleware(['check_token','auth:api']);   
+    Route::post('/add', [PostController::class, 'store'])->middleware(['check_token','auth:api']);   
 });
 
 Route::group([
@@ -53,8 +53,8 @@ Route::group([
     'prefix' => 'comment'
 
 ], function ($router) {
-    Route::get('/list/{post_id}', [CommentController::class, 'get_comment_by_post_id']);   
-    Route::post('/add', [CommentController::class, 'store']);   
+    Route::get('/list/{post_id}', [CommentController::class, 'get_comment_by_post_id'])->middleware(['check_token','auth:api']);   
+    Route::post('/add', [CommentController::class, 'store'])->middleware(['check_token','auth:api']);   
 });
 
 
@@ -63,8 +63,9 @@ Route::group([
     'prefix' => 'user'
 
 ], function ($router) {
-    Route::get('/posts', [UserController::class, 'listPost']);   
-    Route::get('/info', [UserController::class, 'info']);   
+    Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);   
+    Route::get('/info', [UserController::class, 'info'])->middleware(['check_token','auth:api']);
+    Route::post('/update', [UserController::class, 'update']);
 });
 
 Route::group([

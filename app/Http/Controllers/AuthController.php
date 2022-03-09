@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
 use NextApps\VerificationCode\VerificationCode;
-
+use App\Jobs\SentMailVerify;
 class AuthController extends Controller
 {
     /**
@@ -17,9 +17,15 @@ class AuthController extends Controller
      */
     protected $password;
 
+    protected $email_allow;
+
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verify']]);
+        $this->middleware(['check_token']);
         $this->password = '170919';
+        $this->email_allow = [
+            'thanhdang.ag@gmail.com',
+            'vinatechsolution@gmail.com',
+        ];
     }
 
     public function verify(Request $request)
@@ -29,7 +35,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return $this->responseError($validator->errors(), 422);
         }
         $email = $request->email;
         
@@ -40,13 +46,10 @@ class AuthController extends Controller
                 ['password' => bcrypt($this->password), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
             ));
         }
-        $email_allow = [
-            'thanhdang.ag@gmail.com',
-            
-        ];
-        if (in_array($email, $email_allow)) {
-            VerificationCode::send($email);
 
+        if (in_array($email, $this->email_allow)) {
+            \Queue::push(new SentMailVerify($email));
+            // VerificationCode::send($email);
             return $this->responseOK(null, 'Sent verification code');
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
@@ -70,21 +73,27 @@ class AuthController extends Controller
         $code = $request->code;
         $email = $request->email;
 
-        if (VerificationCode::verify($code, $email))
-        {
-            $credentials = $request->only(['email']);
+        
+        if (in_array($email, $this->email_allow)) {
 
-            // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+            if (VerificationCode::verify($code, $email))
+            {
+                $credentials = $request->only(['email']);
 
-            if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $this->password ])) {
-                return response()->json(['message' => 'Unauthorized'], 401);
+                // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+                if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $this->password ])) {
+                    return response()->json(['message' => 'Unauthorized'], 401);
+                }
+
+                return $this->respondWithToken($token, Auth::user());
+
+            } else {
+
+                return $this->responseError('Verification code is incorrect', 201);
             }
-
-            return $this->respondWithToken($token, Auth::user());
-
         } else {
-
-            return $this->responseError('Verification code is incorrect', 201);
+            return $this->responseError('Please contact admin for Beta Test!', 201);
         }
         
     }

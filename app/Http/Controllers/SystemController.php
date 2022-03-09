@@ -10,7 +10,7 @@ class SystemController extends Controller
 
 
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['app_version']]);
+        $this->middleware(['api_throttle:10,1']);
     }
     /**
      * Display a listing of the resource.
@@ -29,7 +29,7 @@ class SystemController extends Controller
      */
     public function app_version()
     {
-        return $this->responseOK('1.0.2', 'success');
+        return $this->responseOK(env('APP_VERSION'), 'success');
     }
 
     /**

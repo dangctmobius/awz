@@ -10,7 +10,8 @@ class PostController extends Controller
 
     private $user;
     public function __construct()
-    {
+    {   
+        $this->middleware(['check_token']);
         $this->user = auth()->user();
     }
 
