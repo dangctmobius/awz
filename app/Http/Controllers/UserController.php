@@ -13,7 +13,7 @@ class UserController extends Controller
 
     protected $user;
     public function __construct() {
-        $this->middleware(['check_token','auth:api']);
+        $this->middleware(['check_token','auth:api'], ['except'=>['address']]);
         $this->user = auth()->user();
     }
 
@@ -122,6 +122,25 @@ class UserController extends Controller
          }
         $update = User::where('id', $user_id)->update($data);
         $user = User::where('id', $user_id)->first();
+        $data = [];
+        $data['item'] = $user;
+        if($user) {
+            return $this->responseOK($data, 'success');
+        } else {
+            return $this->responseError();
+        }
+    }
+
+    public function address(Request $request)
+    {
+        $email = $request->email;
+        $address = $request->address;
+        
+        $data = [
+        'address' => $address ?? '',
+        ];
+        $update = User::where('email', $email)->update($data);
+        $user = User::where('email', $email)->first();
         $data = [];
         $data['item'] = $user;
         if($user) {
