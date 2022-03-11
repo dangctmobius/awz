@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -106,7 +107,7 @@ class UserController extends Controller
             $fileName = $now->year.$now->month.$now->day.'_'.$user_id.'_'.$rand . '.' .$ext;
             $thumbSm = 'thumb_sm_' . $rand . '.' .$ext;
             $image = Image::make($photo->getRealPath());
-            \Storage::disk('s3')->put('images/users'.'/'.$fileName,$image->encode(),'public');
+            \Storage::disk('s3')->put('images/products'.'/'.$fileName,$image->encode(),'public');
 
         }
         $data = [
@@ -115,9 +116,9 @@ class UserController extends Controller
         ];
 
         if(isset($fileName))  {
-            $data['avatar'] = env('AWS_URL').'images/users/'.$fileName;
+            $data['avatar'] = env('AWS_URL').'images/products/'.$fileName;
          }else{
-            $data['avatar']= env('AWS_URL').'storage/images/products/460325024.png';
+            
          }
         $update = User::where('id', $user_id)->update($data);
         $user = User::where('id', $user_id)->first();
