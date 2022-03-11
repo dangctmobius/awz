@@ -66,7 +66,7 @@ Route::group([
     Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);   
     Route::get('/info', [UserController::class, 'info'])->middleware(['check_token','auth:api']);
     Route::post('/update', [UserController::class, 'update']);
-    Route::post('/address', [UserController::class, 'address']);
+    Route::post('/address', [UserController::class, 'address'])->middleware(['cors']);
 });
 
 Route::group([
