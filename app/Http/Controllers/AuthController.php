@@ -71,7 +71,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $code = $request->code;
+        $code = $request->verify_code;
         $email = $request->email;
 
         
