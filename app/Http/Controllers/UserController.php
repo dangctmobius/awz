@@ -13,7 +13,7 @@ class UserController extends Controller
 
     protected $user;
     public function __construct() {
-        $this->middleware(['check_token','auth:api'], ['except'=>['address']]);
+        $this->middleware(['check_token','auth:api']);
         $this->user = auth()->user();
     }
 
