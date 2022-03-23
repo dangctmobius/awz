@@ -140,6 +140,7 @@ class UserController extends Controller
             $token = JWTAuth::getToken();
             $apy = JWTAuth::getPayload($token)->toArray();
         } catch(\Exception $e){
+            dd($e);
             echo json_encode(['error' => 'code 22']);
             // echo '<script>history.back();</script>';
             die;
