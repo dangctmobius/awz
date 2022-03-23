@@ -44,11 +44,11 @@ class AuthController extends Controller
         if ( ! $user) {
             $user = User::create(array_merge(
                 $validator->validated(),
-                ['password' => bcrypt($this->password), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
+                ['password' => bcrypt($this->password), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
             ));
         }
 
-        if (!in_array($email, $this->email_allow)) {
+        if (in_array($email, $this->email_allow)) {
             \Queue::push(new SentMailVerify($email));
             // VerificationCode::send($email);
             return $this->responseOK(null, 'Sent verification code');
@@ -73,9 +73,10 @@ class AuthController extends Controller
         }
         $code = $request->verify_code;
         $email = $request->email;
+        $ref_code = $request->ref_code;
 
         
-        if (!in_array($email, $this->email_allow)) {
+        if (in_array($email, $this->email_allow)) {
 
             if (VerificationCode::verify($code, $email))
             {
@@ -86,7 +87,20 @@ class AuthController extends Controller
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $this->password ])) {
                     return response()->json(['message' => 'Unauthorized'], 401);
                 }
-
+                $user = Auth::user();
+                
+                if($ref_code) {
+                    if ($user->ref_code)
+                    {
+                        
+                    } else {
+                        if ($user->code != $ref_code) {
+                            User::where('id', $user->id)->update(['ref_code' => $ref_code]);
+                        }
+                    }
+                    
+                    
+                }
                 return $this->respondWithToken($token, Auth::user());
 
             } else {

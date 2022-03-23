@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
 use Intervention\Image\Facades\Image;
+use Tymon\JWTAuth\Facades\JWTAuth; //use this library
 
 class UserController extends Controller
 {
@@ -13,7 +14,7 @@ class UserController extends Controller
 
     protected $user;
     public function __construct() {
-        $this->middleware(['check_token','auth:api']);
+        $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
     }
 
@@ -29,7 +30,9 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments')->with('user')->skip($page*$limit )->take($limit)->get();
+        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user') ->with(['likes' => function ($q) use($user_id) {
+            $q->where('likes.user_id', $user_id);
+    }])->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
@@ -38,7 +41,7 @@ class UserController extends Controller
 
     public function info(Request $request)
 
-    {   $user = User::withCount('posts')->find($this->user->id);
+    {   $user = User::where('id', $this->user->id)->withCount('posts')->first();
         return $this->responseOk($user);
     }
 
@@ -133,17 +136,29 @@ class UserController extends Controller
 
     public function address(Request $request)
     {   
-        // $time_request = $request->time_request;
-        // $code = $request->code;
-        // if (isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request) == $code))
-        // {   $token = \DB::table('token_requests')->where('token', $code)->count();
-        //     if ($token > 0) {
-        //         echo json_encode(['error' => 'code 20']);die;
-        //     }
-        //     \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
-        // } else {
-        //     echo json_encode(['error' => 'code 21']);die;
-        // }
+        try {
+            $token = JWTAuth::getToken();
+            $apy = JWTAuth::getPayload($token)->toArray();
+        } catch(\Exception $e){
+            echo json_encode(['error' => 'code 22']);
+            echo '<script>history.back();</script>';
+            die;
+        }
+        $time_request = $request->time_request;
+        $code = $request->code;
+        if(isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request) == $code))
+        {   $token = \DB::table('token_requests')->where('token', $code)->count();
+            if (!$token > 0) {
+                echo json_encode(['error' => 'code 20']);
+                echo '<script>history.back();</script>';
+                die;
+            }
+            \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+        } else {
+            echo json_encode(['error' => 'code 21']);
+            echo '<script>history.back();</script>';
+            die;
+        }
 
         $email = $request->email;
         $address = $request->address;
@@ -152,10 +167,26 @@ class UserController extends Controller
         'address' => $address ?? '',
         ];
         $update = User::where('email', $email)->update($data);
-        $user = User::where('email', $email)->first();
-        $data = [];
-        $data['item'] = $user;
+        // $user = User::where('email', $email)->first();
+        // $data = [];
+        // $data['item'] = $user;
+        if($update) {
+            // return $this->responseOK(null, 'success');
+            return \Redirect::to('https://connect.azworld.network?connect=success');
+        } else {
+            return $this->responseError();
+        }
+    }
+
+    public function refs(Request $request)
+    {   
+        $user_id = $this->user->id;
+        $user = User::where('id', $user_id)->with(['refs' => function ($q) use($user_id) {
+            $q->where('id', '<>' ,$user_id);
+    }])->first();
+        
         if($user) {
+            $data = $user->refs;
             return $this->responseOK($data, 'success');
         } else {
             return $this->responseError();

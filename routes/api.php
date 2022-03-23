@@ -7,6 +7,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SystemController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AdsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,10 @@ Route::group([
 
 ], function ($router) {
     Route::get('/list', [PostController::class, 'index'])->middleware(['check_token','auth:api']);   
-    Route::post('/add', [PostController::class, 'store'])->middleware(['check_token','auth:api']);   
+    Route::post('/add', [PostController::class, 'store'])->middleware(['check_token','auth:api']);
+    Route::post('/like/{id}', [PostController::class, 'like'])->middleware(['check_token','auth:api']);   
+    Route::post('/unlike/{id}', [PostController::class, 'unlike'])->middleware(['check_token','auth:api']);   
+    Route::post('/delete/{id}', [PostController::class, 'destroy'])->middleware(['check_token','auth:api']);   
 });
 
 Route::group([
@@ -66,7 +71,8 @@ Route::group([
     Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);   
     Route::get('/info', [UserController::class, 'info'])->middleware(['check_token','auth:api']);
     Route::post('/update', [UserController::class, 'update']);
-    Route::post('/address', [UserController::class, 'address'])->middleware(['check_token','auth:api']);
+    Route::get('/address', [UserController::class, 'address']);
+    Route::get('/refs', [UserController::class, 'refs'])->middleware(['check_token','auth:api']);
 });
 
 Route::group([
@@ -77,3 +83,32 @@ Route::group([
     Route::get('/app_version', [SystemController::class, 'app_version']);   
 });
 
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'earn'
+
+], function ($router) {
+    Route::get('/earn', [EarnController::class, 'earn'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'task'
+
+], function ($router) {
+    Route::get('/list', [TaskController::class, 'list'])->middleware(['check_token','auth:api']);
+    Route::post('/earn', [TaskController::class, 'earn'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'ads'
+
+], function ($router) {
+    Route::get('/limit', [AdsController::class, 'limit'])->middleware(['check_token','auth:api']);
+    Route::post('/earn', [AdsController::class, 'earn'])->middleware(['check_token','auth:api']);
+    Route::get('/check_show_ads', [AdsController::class, 'check_show_ads'])->middleware(['check_token','auth:api']);
+});

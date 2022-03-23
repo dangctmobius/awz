@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use App\Models\Post;
+use App\Models\Like;
+
 class PostController extends Controller
 {   
 
@@ -27,7 +29,9 @@ class PostController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->orderBy('id', 'desc')->withCount('comments')->with('user')->skip($page*$limit )->take($limit)->get();
+        $products = Post::where('status', 1)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user') ->with(['likes' => function ($q) use($user_id) {
+                $q->where('likes.user_id', $user_id);
+        }])->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
@@ -81,7 +85,6 @@ class PostController extends Controller
         $data = [
         'content' => $content ?? 'Không tên',
         'user_id' => $user_id ?? 1,
-        'likes' => 0,
         'status'    => 1,
         'created_at' => time()
         ];
@@ -119,16 +122,24 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function like($id, Request $request)
+    public function like($id)
     {   
-        // $is_like = $request->is_like;
+        $like = Like::insert(['post_id' => $id, 'user_id' => $this->user->id]);
+        if($like){
+            return $this->responseOK(null, 'success');
+         }else{
+            return $this->responseError();
+         }
+    }
 
-        // $update = Post::where('id', $id)->update(['likes' => $is_like, 'updated_at'=>time()]);
-        // if($update){
-        //     return $this->responseOK(null, 'success');
-        //  }else{
-        //     return $this->responseError();
-        //  }
+    public function unlike($id)
+    {   
+        $like = Like::where('post_id', $id)->where('user_id', $this->user->id)->delete();
+        if($like){
+            return $this->responseOK(null, 'success');
+         }else{
+            return $this->responseError();
+         }
     }
 
     /**
@@ -154,6 +165,7 @@ class PostController extends Controller
         //
     }
 
+  
     /**
      * Remove the specified resource from storage.
      *
@@ -162,6 +174,12 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::where('id', $id)->where('user_id', $this->user->id)->delete();
+        if($post){
+            return $this->responseOK(null, 'success');
+         }else{
+            return $this->responseError();
+         }
+
     }
 }

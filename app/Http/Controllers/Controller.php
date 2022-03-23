@@ -116,4 +116,14 @@ class Controller extends BaseController
         }
         return request()->ip(); // it will return server ip when no client ip found
     }
+
+    public function genCode($length = 6) {
+        $characters = '123456789ABCDEFGHJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
 }
