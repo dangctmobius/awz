@@ -141,7 +141,7 @@ class UserController extends Controller
             $apy = JWTAuth::getPayload($token)->toArray();
         } catch(\Exception $e){
             echo json_encode(['error' => 'code 22']);
-            echo '<script>history.back();</script>';
+            // echo '<script>history.back();</script>';
             die;
         }
         $time_request = $request->time_request;
@@ -150,13 +150,13 @@ class UserController extends Controller
         {   $token = \DB::table('token_requests')->where('token', $code)->count();
             if (!$token > 0) {
                 echo json_encode(['error' => 'code 20']);
-                echo '<script>history.back();</script>';
+                // echo '<script>history.back();</script>';
                 die;
             }
             \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
         } else {
             echo json_encode(['error' => 'code 21']);
-            echo '<script>history.back();</script>';
+            // echo '<script>history.back();</script>';
             die;
         }
 
@@ -171,8 +171,8 @@ class UserController extends Controller
         // $data = [];
         // $data['item'] = $user;
         if($update) {
-            // return $this->responseOK(null, 'success');
-            return \Redirect::to('https://connect.azworld.network?connect=success');
+            return $this->responseOK(null, 'success');
+            // return \Redirect::to('https://connect.azworld.network?connect=success');
         } else {
             return $this->responseError();
         }
