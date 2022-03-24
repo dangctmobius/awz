@@ -15,11 +15,11 @@ class CheckToken
         $code = $request->code;
         if (isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request)) === $code)
         {   
-            // $token = \DB::table('token_requests')->where('token', $code)->count();
-            // if (!$token > 0) {
-            //     echo json_encode(['error' => 'code 20']);die;
-            // }
-            // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+            $token = \DB::table('token_requests')->where('token', $code)->count();
+            if ($token > 0) {
+                echo json_encode(['error' => 'code 20']);die;
+            }
+            \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
             return $next($request);
 
         } else {
