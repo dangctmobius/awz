@@ -26,6 +26,7 @@ class AuthController extends Controller
         $this->email_allow = [
             'thanhdang.ag@gmail.com',
             'vinatechsolution@gmail.com',
+            'leonvinhle@gmail.com'
         ];
     }
 
