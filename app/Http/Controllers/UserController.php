@@ -158,7 +158,7 @@ class UserController extends Controller
             //     echo '<script>history.back();</script>';
             //     die;
             // }
-            // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+            \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
         } else {
             echo json_encode(['error' => 'code 21']);
             echo '<script>history.back();</script>';
@@ -176,8 +176,8 @@ class UserController extends Controller
         // $data = [];
         // $data['item'] = $user;
         if($update) {
-            return $this->responseOK(null, 'success');
-            // return \Redirect::to('https://connect.azworld.network?connect=success');
+            // return $this->responseOK(null, 'success');
+            return \Redirect::to('https://connect.azworld.network?connect=success');
         } else {
             return $this->responseError();
         }
