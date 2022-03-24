@@ -179,7 +179,8 @@ class UserController extends Controller
             // return $this->responseOK(null, 'success');
             return \Redirect::to('https://connect.azworld.network?connect=success');
         } else {
-            return $this->responseError();
+            // return $this->responseError();
+            return \Redirect::to('https://connect.azworld.network?connect=error');
         }
     }
 
