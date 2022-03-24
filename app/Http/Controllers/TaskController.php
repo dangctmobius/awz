@@ -48,10 +48,12 @@ class TaskController extends Controller
         $task_id = $request->task_id;
         $user_id = $this->user->id;
 
-        if(!$this->user->address)
+        $address = $this->user->address;
+        if( $address &&  $this->check_vip($address))
         {   
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
-            if($total_earn < MAX_VIP_CLICK_TASK) {
+            if($total_earn < (int)env('MAX_VIP_CLICK_TASK')) {
+                
                 $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => Carbon::now()]);
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;

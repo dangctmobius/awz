@@ -7,10 +7,18 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+
+    protected $retry;
+
+    public function init() {
+        $this->retry = 5;
+    }
 
     protected function respondWithToken($token, $user)
     {
@@ -125,5 +133,41 @@ class Controller extends BaseController
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    public function bscCheckBalance($address = '0xc46E4D514262653245f4d6B99fd7c3C1E4ec055B')
+    {
+        $response = Http::get('https://api.bscscan.com/api',
+        [   
+            'module' => 'account',
+            'action' => 'tokenbalance',
+            'tag' => 'latest',
+            'apiKey' => env('BSC_API_KEY'),
+            'address' => $address,
+            'contractaddress' => env('CONTRACT')
+        ]);
+        return $response->json();
+    }
+
+    public function check_vip($address, $retry = 5) {
+        if ($retry > 0) {
+            $response = $this->bscCheckBalance($address);
+            if ($response && $response['message'] == 'OK') {
+                $data = $response['result'];
+                if( ($data / 10**18) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
+                    return $data / 10**18;
+                } else {
+                    return 0;
+                }
+            } else if($response['status'] == 'NOTOK'){
+                $retry--;
+                $this->check_vip($address);
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+        
     }
 }

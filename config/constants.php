@@ -1,4 +1,4 @@
 <?php
-define('MAX_VIP_CLICK_TASK', 20);
-define('MAX_VIP_REWARD_ADS', 10);
-define('POINT_REWARD_ADS', 1);
+define('MAX_VIP_CLICK_TASK', env('MAX_VIP_CLICK_TASK'));
+define('MAX_VIP_REWARD_ADS', env('MAX_VIP_REWARD_ADS'));
+define('POINT_REWARD_ADS', env('POINT_REWARD_ADS'));

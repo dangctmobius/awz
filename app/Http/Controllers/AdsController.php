@@ -31,12 +31,13 @@ class AdsController extends Controller
     {
         $task_id = $request->task_id;
         $user_id = $this->user->id;
-
-        if(!$this->user->address)
+        $address = $this->user->address;
+        // dd($address);
+        if($address && $this->check_vip($address))
         {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
-            if($total_earn < MAX_VIP_CLICK_TASK) {
-                $reward = POINT_REWARD_ADS;
+            if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
+                $reward = (int)env('POINT_REWARD_ADS');
                 if(true){
                     $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward point from ads', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance', $reward);
@@ -58,12 +59,13 @@ class AdsController extends Controller
     {
         $task_id = $request->task_id;
         $user_id = $this->user->id;
-
-        if(!$this->user->address)
+        $address = $this->user->address;
+        if($address && $this->check_vip($address))
         {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
+            
             if($total_earn < MAX_VIP_CLICK_TASK)
-            {
+            { 
                     return $this->responseOK(['allow_show_ads' => 1], 'success');
 
             } else {

@@ -9,6 +9,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\AdsController;
+use App\Http\Controllers\EarnController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +75,13 @@ Route::group([
     Route::post('/update', [UserController::class, 'update']);
     Route::get('/address', [UserController::class, 'address']);
     Route::get('/refs', [UserController::class, 'refs'])->middleware(['check_token','auth:api']);
+    Route::get('/get_balance', [UserController::class, 'get_balance'])->middleware(['check_token','auth:api']);
+    Route::post('/disconnect', [UserController::class, 'disconnect'])->middleware(['check_token','auth:api']);
+    Route::get('/check_vip', [UserController::class, 'controller_check_vip'])->middleware(['check_token','auth:api']);
+    Route::get('/total_spin', [UserController::class, 'total_spin'])->middleware(['check_token','auth:api']);
+    Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
+    Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
+    Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
 });
 
 Route::group([
@@ -89,7 +98,9 @@ Route::group([
     'prefix' => 'earn'
 
 ], function ($router) {
+    Route::get('/list', [EarnController::class, 'list'])->middleware(['check_token','auth:api']);
     Route::get('/earn', [EarnController::class, 'earn'])->middleware(['check_token','auth:api']);
+    Route::get('/earn_total', [EarnController::class, 'earn_total'])->middleware(['check_token','auth:api']);
 });
 
 
