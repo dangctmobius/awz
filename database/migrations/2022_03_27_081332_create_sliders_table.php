@@ -17,6 +17,7 @@ class CreateSlidersTable extends Migration
             $table->id();
             $table->text('image_url');
             $table->text('tracking_url');
+            $table->string('cate');
             $table->integer('status')->default(1); // 
             $table->timestamps();
         });
