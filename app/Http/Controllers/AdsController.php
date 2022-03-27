@@ -28,7 +28,15 @@ class AdsController extends Controller
     }
 
     public function earn(Request $request)
-    {
+    {   
+
+        $validator = \Validator::make($request->all(), [
+            'g-recaptcha-response' => 'required|recaptcha'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         $address = $this->user->address;
@@ -41,7 +49,7 @@ class AdsController extends Controller
                 if(true){
                     $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward point from ads', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance', $reward);
-                    return $this->responseOK(null, 'success');
+                    return $this->responseOK(true, 'success');
                 }else{
                     return $this->responseError();
                 }

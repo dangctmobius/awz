@@ -10,6 +10,9 @@ use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\AdsController;
 use App\Http\Controllers\EarnController;
+use App\Http\Controllers\KycController;
+use App\Http\Controllers\CashbackController;
+use App\Http\Controllers\BrandController;
 
 
 /*
@@ -122,4 +125,31 @@ Route::group([
     Route::get('/limit', [AdsController::class, 'limit'])->middleware(['check_token','auth:api']);
     Route::post('/earn', [AdsController::class, 'earn'])->middleware(['check_token','auth:api']);
     Route::get('/check_show_ads', [AdsController::class, 'check_show_ads'])->middleware(['check_token','auth:api']);
+});
+
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'kyc'
+
+], function ($router) {
+    Route::post('/add', [KycController::class, 'store'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'cashback'
+
+], function ($router) {
+    Route::get('/list_banner/{type}', [CashbackController::class, 'list_banner'])->middleware(['check_token','auth:api']);
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'brand'
+
+], function ($router) {
+    Route::get('/list/{type}', [BrandController::class, 'list'])->middleware(['check_token','auth:api']);
 });

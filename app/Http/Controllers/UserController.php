@@ -16,10 +16,21 @@ class UserController extends Controller
 
     protected $user;
     protected $input;
+    protected $spin_list_item;
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,2,3,2,1,3,2,3,5,6,2,3,5,4,2,5,6,8,2,3,7,6,4,5,3,2,1,3,3,7,8,9,3,2,1,5,3);
+        $this->input = array(1,1,1,0,1,1,2,2,1,5,0,2,3,5,4,2,1,2,3,2,3,1,6,4,5,3,2,1,3,3,7,1,1,3,2,1,3,3);
+        $this->spin_list_item = [
+            ['color' => '#a8e6cf', 'value' => 1, 'label' => '$1'],
+            ['color' => '#dcedc1', 'value' => 5, 'label' => '$5'],
+            ['color' => '#ffd3b6', 'value' => 10, 'label' =>  '$10'],
+            ['color' => '#ffaaa5', 'value' => 15, 'label' =>  '$15'],
+            ['color' => '#ff8b94', 'value' => 20, 'label' =>  '$20'],
+            ['color' => '#3385c6', 'value' => 25, 'label' =>  '$25'],
+            ['color' => '#4279a3', 'value' => 30, 'label' =>  '$30'],
+            ['color' => '#8b9dc3', 'value' => 50, 'label' =>  '$50'],
+        ];
     }
 
     /**
@@ -144,7 +155,6 @@ class UserController extends Controller
             $token = JWTAuth::getToken();
             $apy = JWTAuth::getPayload($token)->toArray();
         } catch(\Exception $e){
-            dd($e);
             echo json_encode(['error' => 'code 22']);
             echo '<script>history.back();</script>';
             die;
@@ -236,6 +246,8 @@ class UserController extends Controller
                     return $this->responseOK(['is_vip' => 1, 'vip_label' => 'GOLD'], 'success');
                 }else if ($balance > (int)env('AMOUNT_TOKEN_IS_PLATINUM')) {
                     return $this->responseOK(['is_vip' => 1, 'vip_label' => 'PLATINUM'], 'success');
+                } else {
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'FREE'], 'success');
                 }
                 
             } else {
@@ -306,18 +318,7 @@ class UserController extends Controller
         if($address && $this->check_vip($address))
         {   
             
-            $data = [
-                '1 point',
-                '2 point',
-                '3 point',
-                '4 point',
-                '5 point',
-                '6 point',
-                '7 point',
-                '8 point',
-                '9 point',
-                '10 point',
-            ];
+            $data['items'] = $this->spin_list_item;
             return $this->responseOK($data, 'success');
            
         } else {
@@ -342,7 +343,7 @@ class UserController extends Controller
                             break;
                         }
                     }
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward + 1, 'subject' => 'spin', 'description' => 'Reward token from spin', 'created_at' => Carbon::now()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward token from spin', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance', $reward);
                     return $this->responseOK(null, 'success');
                     return $this->responseOK($spin, 'success');
