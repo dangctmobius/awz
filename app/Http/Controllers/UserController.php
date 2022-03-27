@@ -168,7 +168,7 @@ class UserController extends Controller
             //     echo '<script>history.back();</script>';
             //     die;
             // }
-            \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+            // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
         } else {
             echo json_encode(['error' => 'code 21']);
             echo '<script>history.back();</script>';
