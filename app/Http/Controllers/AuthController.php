@@ -49,7 +49,7 @@ class AuthController extends Controller
             ));
         }
 
-        if (in_array($email, $this->email_allow)) {
+        if ( ! in_array($email, $this->email_allow)) {
             \Queue::push(new SentMailVerify($email));
             // VerificationCode::send($email);
             return $this->responseOK(null, 'Sent verification code');
@@ -77,7 +77,7 @@ class AuthController extends Controller
         $ref_code = $request->ref_code;
 
         
-        if (in_array($email, $this->email_allow)) {
+        if ( ! in_array($email, $this->email_allow)) {
 
             if (VerificationCode::verify($code, $email))
             {
