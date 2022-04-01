@@ -24,9 +24,6 @@ class AuthController extends Controller
         $this->middleware(['check_token']);
         $this->password = '170919';
         $this->email_allow = [
-            'thanhdang.ag@gmail.com',
-            'vinatechsolution@gmail.com',
-            'leonvinhle@gmail.com'
         ];
     }
 
