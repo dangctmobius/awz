@@ -21,7 +21,7 @@ return [
     | they look too similar.
     |
     */
-    'characters' => '123456789ABCDEFGHJKMNPQRSTUVWXYZ',
+    'characters' => '123456789123456789',
 
     /*
     |--------------------------------------------------------------------------

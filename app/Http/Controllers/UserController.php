@@ -236,8 +236,9 @@ class UserController extends Controller
     {   
         $address = $this->user->address;
         if($address)
-        {
-            if($balance = $this->check_vip($address))
+        {   
+            $balance = $this->check_vip($address);
+            if((int)$balance > 0)
             {
                 if ($balance > (int)env('AMOUNT_TOKEN_IS_SILVER'))
                 {
@@ -247,7 +248,7 @@ class UserController extends Controller
                 }else if ($balance > (int)env('AMOUNT_TOKEN_IS_PLATINUM')) {
                     return $this->responseOK(['is_vip' => 1, 'vip_label' => 'PLATINUM'], 'success');
                 } else {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'FREE'], 'success');
+                    return $this->responseOK(['is_vip' => 0, 'vip_label' => 'FREE'], 'success');
                 }
                 
             } else {
