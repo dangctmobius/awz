@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['connect.azworld.network'],
+    'allowed_origins' => ['connect.azworld.network','*.fhr.vn'],
 
     'allowed_origins_patterns' => [],
 
