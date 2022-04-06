@@ -76,7 +76,7 @@ Route::group([
     Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);   
     Route::get('/info', [UserController::class, 'info'])->middleware(['check_token','auth:api']);
     Route::post('/update', [UserController::class, 'update']);
-    Route::get('/address', [UserController::class, 'address'])->middleware(['check_token','auth:api','cors']);;
+    Route::post('/address', [UserController::class, 'address'])->middleware(['check_token','auth:api','cors']);;
     Route::get('/refs', [UserController::class, 'refs'])->middleware(['check_token','auth:api']);
     Route::get('/get_balance', [UserController::class, 'get_balance'])->middleware(['check_token','auth:api']);
     Route::post('/disconnect', [UserController::class, 'disconnect'])->middleware(['check_token','auth:api']);
