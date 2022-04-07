@@ -155,8 +155,8 @@ class Controller extends BaseController
             if ($response && $response['message'] == 'OK') {
                 $data = $response['result'];
                 if( ($data / 10**18) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
-                    $decimal = (int)env('CONTRACT_DEC');
-                    return $data / 10**$decimal;
+                    // $decimal = (int)env('CONTRACT_DEC');
+                    return $data / 10**4;
                 } else {
                     return 0;
                 }
