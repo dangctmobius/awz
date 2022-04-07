@@ -150,25 +150,26 @@ class Controller extends BaseController
     }
 
     public function check_vip($address, $retry = 5) {
-        if ($retry > 0) {
-            $response = $this->bscCheckBalance($address);
-            if ($response && $response['message'] == 'OK') {
-                $data = $response['result'];
-                if( ($data / 10**18) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
-                    // $decimal = (int)env('CONTRACT_DEC');
-                    return $data / 10**4;
-                } else {
-                    return 0;
-                }
-            } else if($response['status'] == 'NOTOK'){
-                $retry--;
-                $this->check_vip($address);
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
+        return 5000;
+        // if ($retry > 0) {
+        //     $response = $this->bscCheckBalance($address);
+        //     if ($response && $response['message'] == 'OK') {
+        //         $data = $response['result'];
+        //         if( ($data / 10**18) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
+        //             // $decimal = (int)env('CONTRACT_DEC');
+        //             return $data / 10**4;
+        //         } else {
+        //             return 0;
+        //         }
+        //     } else if($response['status'] == 'NOTOK'){
+        //         $retry--;
+        //         $this->check_vip($address);
+        //     } else {
+        //         return 0;
+        //     }
+        // } else {
+        //     return 0;
+        // }
         
     }
 }
