@@ -41,21 +41,29 @@ class AdsController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         // dd($address);
-        if($address && $this->check_vip($address))
+        
+        if($address)
         {   
-            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
-            if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
-                $reward = (int)env('POINT_REWARD_ADS');
-                if(true){
-                    $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward point from ads', 'created_at' => Carbon::now()]);
-                    User::where('id', $user_id)->increment('balance', $reward);
-                    return $this->responseOK(true, 'success');
-                }else{
-                    return $this->responseError();
+            $balance = $this->check_vip($address);
+            if($balance)
+            {
+                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
+                if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
+                    $reward = (int)env('POINT_REWARD_ADS');
+                    if(true){
+                        $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward point from ads', 'created_at' => Carbon::now()]);
+                        User::where('id', $user_id)->increment('balance', $reward);
+                        return $this->responseOK(true, 'success');
+                    }else{
+                        return $this->responseError();
+                    }
+                } else {
+                    return $this->responseError('You watched max daily.', 200);
                 }
             } else {
-                return $this->responseError('You watched max daily.', 200);
+                return $this->responseError('You\'re not a VIP member.', 200);
             }
+            
            
         } else {
             return $this->responseError('You\'re not a VIP member.', 200);
