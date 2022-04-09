@@ -38,9 +38,14 @@ class SystemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function allow_function(Request $request)
     {
-        //
+        $data = [
+            'cashback' => 1,
+            'ptc' => 1,
+        ];
+
+        return $this->responseOK($data, 'success');
     }
 
     /**

@@ -36,6 +36,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->responseError($validator->errors(), 422);
         }
+
         $email = $request->email;
         
         $user = User::where('email', $email)->first();
@@ -73,6 +74,32 @@ class AuthController extends Controller
         $email = $request->email;
         $ref_code = $request->ref_code;
 
+
+        $user = User::where('email', $email)->first();
+
+        if($user) {
+            if($user->ref_code) {
+                
+
+            } else {
+                if( $ref_code ) {
+                    if ($user->code != $ref_code) {
+                        $check_code = User::where('code', $ref_code)->first();
+                        if($check_code) {
+                            User::where('id', $user->id)->update(['ref_code' => $ref_code]);
+                        } else {
+                            return $this->responseError('Invalid referral code', 201);
+                        }
+                    } 
+
+                } else {
+                    return $this->responseError('Referral code required', 201);
+                }
+               
+            }
+        }
+        
+        
         
         if ( ! in_array($email, $this->email_allow)) {
 
@@ -83,22 +110,10 @@ class AuthController extends Controller
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $this->password ])) {
-                    return response()->json(['message' => 'Unauthorized'], 401);
+                    
+                    return $this->responseError('Unauthorized1', 201);
                 }
-                $user = Auth::user();
                 
-                if($ref_code) {
-                    if ($user->ref_code)
-                    {
-                        
-                    } else {
-                        if ($user->code != $ref_code) {
-                            User::where('id', $user->id)->update(['ref_code' => $ref_code]);
-                        }
-                    }
-                    
-                    
-                }
                 return $this->respondWithToken($token, Auth::user());
 
             } else {

@@ -93,6 +93,8 @@ Route::group([
 
 ], function ($router) {
     Route::get('/app_version', [SystemController::class, 'app_version']);   
+    Route::get('/allow_function', [SystemController::class, 'allow_function']);   
+
 });
 
 
