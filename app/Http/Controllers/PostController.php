@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use App\Models\Post;
 use App\Models\Like;
+use App\Models\Tag;
+use App\Models\PostTagRelationship;
 
 class PostController extends Controller
 {   
@@ -29,7 +31,7 @@ class PostController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user') ->with(['likes' => function ($q) use($user_id) {
+        $products = Post::where('status', 1)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('tags')->with('user') ->with(['likes' => function ($q) use($user_id) {
                 $q->where('likes.user_id', $user_id);
         }])->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
@@ -82,6 +84,18 @@ class PostController extends Controller
 
         }
         $content = $request->content;
+        $tags = $request->tags;
+
+        $tags = explode(" ",$tags);
+        $insert_tags = [];
+        foreach($tags as $tag) {
+            if (str_starts_with($tag, '')) {
+                array_push($insert_tags,$tag);
+            }
+        }
+
+        
+
         $data = [
         'content' => $content ?? 'Không tên',
         'user_id' => $user_id ?? 1,
@@ -96,6 +110,28 @@ class PostController extends Controller
          }
         $insertId = Post::insertGetId($data);
         $post = Post::where('id', $insertId)->first();
+
+
+        foreach($insert_tags as $t) {
+            $result = Tag::where("tag", $t)->first();
+
+          $ptr = new PostTagRelationship;
+          $ptr->post_id = $post->id;
+          $ptr->user_id = $this->user->id;
+
+          if ($result) {
+              // tag found just bind it
+              $ptr->tag_id = $result->id;
+              $post->tags()->attach($ptr->tag_id);
+          } else {
+              $tag = new Tag;
+              $tag->tag = $t;
+              $tag->save();
+              $ptr->tag_id = $tag->id;
+              $post->tags()->attach($ptr->tag_id);
+          }
+        }
+
         $data = [];
         $data['item'] = $post;
         if($post) {

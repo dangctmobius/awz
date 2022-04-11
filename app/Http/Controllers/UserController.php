@@ -45,7 +45,7 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user') ->with(['likes' => function ($q) use($user_id) {
+        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user')->with('tags') ->with(['likes' => function ($q) use($user_id) {
             $q->where('likes.user_id', $user_id);
     }])->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
