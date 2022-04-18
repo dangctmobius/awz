@@ -30,10 +30,91 @@ class PostController extends Controller
         $limit = $request->limit ? (int)$request->limit : 20;
         $user_id = $this->user->id;
         $data = [];
+        $list_my_user_following = $this->user->following()->get();
+
+        $data['total'] = Post::whereIn('user_id', $list_my_user_following)->count();
+        $products = Post::where('status', 1)->orderBy('id', 'desc')
+        // ->whereIn('user_id', $list_my_user_following)
+        ->withCount('comments', 'likes')
+        ->with('tags')
+        ->with(['user' => function ($q) use($user_id) {
+            $q->select('users.id', 'users.name', 'users.email', 'users.avatar',     'users.verify')->with(['followers' => function ($q2) use($user_id) {
+                $q2->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.verify')->where('follower_id', $user_id);
+            }]);
+        }])
+       
+        // ->with('user.followers')
+        ->with(['likes' => function ($q) use($user_id) {
+             $q->where('likes.user_id', $user_id);
+        }])
+        ->skip($page*$limit )->take($limit)->get();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $products;
+        return $this->responseOK($data);
+    }
+
+    public function list_by_tag(Request $request)
+    {
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $user_id = $this->user->id;
+        $tag = $request->tag;
+        $data = [];
+        $list_my_user_following = $this->user->following()->get();
+
+        $data['total'] = Post::whereIn('user_id', $list_my_user_following)->count();
+        $products = Post::where('status', 1)->orderBy('id', 'desc')
+        // ->whereIn('user_id', $list_my_user_following)
+        ->withCount('comments', 'likes')
+        // ->with(['tags' => function ($q_t) use($tag) {
+        //     $q_t->where('tag', $tag);
+        // }])
+        ->with('tags')
+        ->whereHas('tags', function ($query) use($tag) {
+            return $query->where('tag', $tag);
+        })
+        ->with(['user' => function ($q) use($user_id) {
+            $q->select('users.id', 'users.name', 'users.email', 'users.avatar',     'users.verify')->with(['followers' => function ($q2) use($user_id) {
+                $q2->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.verify')->where('follower_id', $user_id);
+            }]);
+        }])
+       
+        // ->with('user.followers')
+        ->with(['likes' => function ($q) use($user_id) {
+             $q->where('likes.user_id', $user_id);
+        }])
+        ->skip($page*$limit )->take($limit)->get();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $products;
+        return $this->responseOK($data);
+    }
+
+
+    public function get_list_by_user($id, Request $request)
+    {
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $user_id = $this->user->id;
+        $data = [];
+
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('tags')->with('user') ->with(['likes' => function ($q) use($user_id) {
-                $q->where('likes.user_id', $user_id);
-        }])->skip($page*$limit )->take($limit)->get();
+        $products = Post::where('status', 1)->orderBy('id', 'desc')
+        ->where('user_id', $id)
+        ->withCount('comments', 'likes')
+        ->with('tags')
+        ->with(['user' => function ($q) use($user_id) {
+            $q->select('users.id', 'users.name', 'users.email', 'users.avatar',     'users.verify')->with(['followers' => function ($q2) use($user_id) {
+                $q2->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.verify')->where('follower_id', $user_id);
+            }]);
+        }])
+       
+        // ->with('user.followers')
+        ->with(['likes' => function ($q) use($user_id) {
+             $q->where('likes.user_id', $user_id);
+        }])
+        ->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
@@ -89,12 +170,13 @@ class PostController extends Controller
         $tags = explode(" ",$tags);
         $insert_tags = [];
         foreach($tags as $tag) {
-            if (str_starts_with($tag, '')) {
+            if (str_starts_with($tag, '#')) {
                 array_push($insert_tags,$tag);
             }
         }
 
         
+        $post = New Post;
 
         $data = [
         'content' => $content ?? 'Không tên',
@@ -103,13 +185,20 @@ class PostController extends Controller
         'created_at' => time()
         ];
 
+        $post->content = $content ?? 'No content';
+        $post->user_id = $user_id;
+        $post->status = 1;
+        // $post->created_at = time();
+
         if(isset($fileName))  {
-            $data['image'] = env('AWS_URL').'images/products/'.$fileName;
+            $post->image = env('AWS_URL').'images/products/'.$fileName;
          }else{
-            $data['image']= env('AWS_URL').'storage/images/products/460325024.png';
+            $post->image = '';
          }
-        $insertId = Post::insertGetId($data);
-        $post = Post::where('id', $insertId)->first();
+
+        $post->save();
+        // $insertId = Post::insertGetId($data);
+        // $post = Post::where('id', $insertId)->first();
 
 
         foreach($insert_tags as $t) {

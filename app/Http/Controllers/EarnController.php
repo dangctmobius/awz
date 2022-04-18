@@ -29,13 +29,13 @@ class EarnController extends Controller
         $subject = $request->subject;
         $user_id = $this->user->id;
         
-        if($subject == 0) {
+        if($subject == 1) {
             $subjects = ['tasks', 'spin', 'ads'];
-        } else if ($subject == 1)  {
+        } else if ($subject == 2)  {
             $subjects = ['tasks'];
-        } else if ($subject == 2) {
-            $subjects = ['ads'];
         } else if ($subject == 3) {
+            $subjects = ['ads'];
+        } else if ($subject == 4) {
             $subjects = ['spin'];
         } else {
             $subjects = [];
@@ -72,7 +72,7 @@ class EarnController extends Controller
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward token from ptc', 'created_at' => time()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => time()]);
                     User::where('id', $user_id)->increment('balance', $reward);
                     return $this->responseOK(null, 'success');
                 }else{

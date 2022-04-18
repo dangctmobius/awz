@@ -48,6 +48,13 @@ class SystemController extends Controller
         return $this->responseOK($data, 'success');
     }
 
+    public function home_alert(Request $request)
+    {
+        $data = '';
+
+        return $this->responseOK($data, 'success');
+    }
+
     /**
      * Display the specified resource.
      *

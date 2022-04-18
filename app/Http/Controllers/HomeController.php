@@ -3,38 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Tag;
-class TagController extends Controller
-{   
 
-
-
-
-    protected $user;
-    public function __construct() {
-        $this->middleware(['check_token','auth:api'])->except('address');
-        $this->user = auth()->user();
-    }
+class HomeController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function list(Request $request)
-    {   
-        $page = $request->page ? (int)$request->page : 0;
-        $limit = $request->limit ? (int)$request->limit : 20;
-        $user_id = $this->user->id;
-        $data = [];
-        $data['total'] = Tag::count();
-        $tags = Tag::withCount('posts')
-        ->orderBy('created_at', 'desc')
-        ->orderBy('posts_count', 'desc')
-        ->skip($page*$limit )->take($limit)->get();
-        $data['page'] = $page;
-        $data['limit'] = $limit;
-        $data['items'] = $tags;
-        return $this->responseOK($data);
+    public function index()
+    {
+        //
     }
 
     /**

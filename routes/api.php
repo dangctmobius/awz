@@ -13,6 +13,7 @@ use App\Http\Controllers\EarnController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\CashbackController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\TagController;
 
 
 /*
@@ -52,10 +53,23 @@ Route::group([
 
 ], function ($router) {
     Route::get('/list', [PostController::class, 'index'])->middleware(['check_token','auth:api']);   
+    Route::get('/list_by_tag', [PostController::class, 'list_by_tag'])->middleware(['check_token','auth:api']);  
     Route::post('/add', [PostController::class, 'store'])->middleware(['check_token','auth:api']);
     Route::post('/like/{id}', [PostController::class, 'like'])->middleware(['check_token','auth:api']);   
     Route::post('/unlike/{id}', [PostController::class, 'unlike'])->middleware(['check_token','auth:api']);   
-    Route::post('/delete/{id}', [PostController::class, 'destroy'])->middleware(['check_token','auth:api']);   
+    Route::post('/delete/{id}', [PostController::class, 'destroy'])->middleware(['check_token','auth:api']);  
+    
+    
+    Route::get('/list/by_user/{id}', [PostController::class, 'get_list_by_user'])->middleware(['check_token','auth:api']);  
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'tag'
+
+], function ($router) {
+    Route::get('/list', [TagController::class, 'list'])->middleware(['check_token','auth:api']);
 });
 
 Route::group([
@@ -85,6 +99,16 @@ Route::group([
     Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
     Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
     Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
+    Route::get('/spin_pool', [UserController::class, 'spin_pool'])->middleware(['check_token','auth:api']);
+
+
+    Route::get('/follow/{id}', [UserController::class, 'follow'])->middleware(['check_token','auth:api']);
+    Route::get('/unfollow/{id}', [UserController::class, 'unfollow'])->middleware(['check_token','auth:api']);
+    Route::get('/followers', [UserController::class, 'followers'])->middleware(['check_token','auth:api']);
+    Route::get('/following', [UserController::class, 'following'])->middleware(['check_token','auth:api']);
+
+
+    Route::get('/other_info/{id}', [UserController::class, 'other_info'])->middleware(['check_token','auth:api']);
 });
 
 Route::group([
@@ -94,6 +118,7 @@ Route::group([
 ], function ($router) {
     Route::get('/app_version', [SystemController::class, 'app_version']);   
     Route::get('/allow_function', [SystemController::class, 'allow_function']);   
+    Route::get('/home_alert', [SystemController::class, 'home_alert']);  
 
 });
 

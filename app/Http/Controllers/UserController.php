@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Earn;
+use App\Models\Followers;
 use Intervention\Image\Facades\Image;
 use Tymon\JWTAuth\Facades\JWTAuth; //use this library
 use Illuminate\Support\Carbon;
@@ -20,16 +21,17 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,1,0,1,1,2,2,1,5,0,2,3,5,4,2,1,2,3,2,3,1,6,4,5,3,2,1,3,3,7,1,1,3,2,1,3,3);
+        $this->input = array(1,1,1,0,0,1,2,2,1,5,0,2,3,5,4,2,1,2,3,2,3,1,6,4,5,3,2,1,3,3,7,1,1,3,2,1,3,3);
         $this->spin_list_item = [
-            ['color' => '#2ab7ca', 'value' => 1, 'label' => '$1'],
+            
             ['color' => '#29a8ab', 'value' => 2, 'label' =>  '$2'],
             ['color' => '#fed766', 'value' => 5, 'label' => '$5'],
             ['color' => '#011f4b', 'value' => 10, 'label' =>  '$10'],
             ['color' => '#03396c', 'value' => 15, 'label' =>  '$15'],
             ['color' => '#851e3e', 'value' => 20, 'label' =>  '$20'],
             ['color' => '#009688', 'value' => 25, 'label' =>  '$25'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '$30']
+            ['color' => '#3b5998', 'value' => 30, 'label' =>  '$30'],
+            ['color' => '#2ab7ca', 'value' => 50, 'label' => '$50']
         ];
     }
 
@@ -45,9 +47,16 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Post::count();
-        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('user')->with('tags') ->with(['likes' => function ($q) use($user_id) {
+        $products = Post::where('status', 1)->where('user_id', $user_id)->orderBy('id', 'desc')->withCount('comments', 'likes')->with('tags')
+        ->with(['user' => function ($q) use($user_id) {
+            $q->select('users.id', 'users.name', 'users.email', 'users.avatar')->with(['followers' => function ($q2) use($user_id) {
+                $q2->select('users.id', 'users.name', 'users.email', 'users.avatar')->where('follower_id', $user_id);
+            }]);
+        }])
+        ->with(['likes' => function ($q) use($user_id) {
             $q->where('likes.user_id', $user_id);
-    }])->skip($page*$limit )->take($limit)->get();
+       }])
+       ->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
@@ -56,7 +65,38 @@ class UserController extends Controller
 
     public function info(Request $request)
 
-    {   $user = User::where('id', $this->user->id)->withCount('posts')->first();
+    {   $user = User::where('id', $this->user->id)
+        ->withCount('posts')
+        ->withCount('following')
+        ->withCount('followers')
+       
+        // ->with(['followers' => function ($q2) {
+        //     $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
+        // }])
+        // ->with(['following' => function ($q2) {
+        //     $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
+        // }])
+        ->first();
+        return $this->responseOk($user);
+    }
+
+
+    public function other_info($id, Request $request)
+
+    {   
+        $user_id = $this->user->id;
+        
+        $user = User::where('id', $id)
+        ->withCount('posts')
+        ->withCount('following')
+        ->withCount('followers')
+        ->with(['followers' => function ($q2) use($user_id) {
+            $q2->select('users.id', 'users.name', 'users.email', 'users.avatar')->where('follower_id', $user_id);
+        }])
+        // ->with(['following' => function ($q2) {
+        //     $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
+        // }])
+        ->first();
         return $this->responseOk($user);
     }
 
@@ -240,13 +280,13 @@ class UserController extends Controller
             $balance = $this->check_vip($address);
             if((int)$balance > 0)
             {
-                if ($balance > (int)env('AMOUNT_TOKEN_IS_SILVER'))
+                if ($balance > (int)env('AMOUNT_TOKEN_IS_PLATINUM'))
                 {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'SILVER'], 'success');
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'PLATINUM'], 'success');
                 } else if ($balance > (int)env('AMOUNT_TOKEN_IS_GOLD')) {
                     return $this->responseOK(['is_vip' => 1, 'vip_label' => 'GOLD'], 'success');
-                }else if ($balance > (int)env('AMOUNT_TOKEN_IS_PLATINUM')) {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'PLATINUM'], 'success');
+                }else if ($balance > (int)env('AMOUNT_TOKEN_IS_SILVER')) {
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'SILVER'], 'success');
                 } else {
                     return $this->responseOK(['is_vip' => 0, 'vip_label' => 'FREE'], 'success');
                 }
@@ -284,7 +324,16 @@ class UserController extends Controller
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $spin = (int)env('LIMIT_REWARD_SPIN') - $total_earn;
-                    return $this->responseOK($spin, 'success');
+
+                    $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+                    
+                    $data['total_spin'] = $spin;
+                    $data['spin_pool'] = 5000;
+                    if($earn) {
+                        $data['remain_pool'] = $data['spin_pool'] - $earn;
+                    }
+                    
+                    return $this->responseOK($data, 'success');
             } else {
                 return $this->responseError('You spin max daily.', 200);
             }
@@ -292,6 +341,23 @@ class UserController extends Controller
         } else {
             return $this->responseError('You\'re not a VIP member.', 200);
         }
+    }
+
+
+    public function spin_pool() 
+    {
+
+        $user_id = $this->user->id;
+        $address = $this->user->address;
+        $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+        $data['spin_pool'] = 5000;
+        if($earn) {
+            $data['remain_pool'] = $data['spin_pool'] - $earn;
+        } else {
+            $data['remain_pool'] = $data['spin_pool'];
+        }
+        
+        return $this->responseOK($data, 'success');
     }
 
 
@@ -344,10 +410,9 @@ class UserController extends Controller
                             break;
                         }
                     }
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward token from spin', 'created_at' => Carbon::now()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance', $reward);
-                    return $this->responseOK(null, 'success');
-                    return $this->responseOK($spin, 'success');
+                    return $this->responseOK(1, 'success');
             } else {
                 return $this->responseError('You spin max daily.', 200);
             }
@@ -365,4 +430,73 @@ class UserController extends Controller
     {
         //
     }
+
+
+
+    public function follow($id, Request $request) 
+    {
+
+        $user_id = $this->user->id;
+        $myInfo = auth()->user();
+
+        $check_followed = Followers::where('follower_id', $myInfo->id)->where('following_id', $id)->first();
+        if( ! $check_followed) {
+            $myInfo->following()->attach($id);
+        } 
+
+        return $this->responseOK("Follow success", 'success');
+
+    }
+
+
+    public function unfollow($id, Request $request) 
+    {
+
+        $user_id = $this->user->id;
+        $myInfo = auth()->user();
+
+        $check_followed = Followers::where('follower_id', $myInfo->id)->where('following_id', $id)->first();
+        if($check_followed) {
+            $myInfo->following()->detach($id);
+        } 
+
+        return $this->responseOK("Unfollow success", 'success');
+
+    }
+
+
+    public function followers(Request $request) 
+    {
+
+        $user_id = $this->user->id;
+        $myInfo = User::select('id', 'name', 'email', 'avatar')->where('id', $this->user->id)->with(['followers' => function ($q2) use($user_id) {
+            $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
+        }])->first();
+        if($myInfo) {
+            $data = $myInfo;
+        }  else {
+            $data = [];
+        }
+
+        return $this->responseOK($data, 'success');
+
+    }
+
+    public function following(Request $request) 
+    {
+
+        $user_id = $this->user->id;
+        $myInfo = User::select('id', 'name', 'email', 'avatar')->where('id', $this->user->id)->with(['following' => function ($q2) use($user_id) {
+            $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
+        }])->first();
+        if($myInfo) {
+            $data= $myInfo;
+        }  else {
+            $data= [];
+        }
+
+        return $this->responseOK($data, 'success');
+
+    }
+
 }

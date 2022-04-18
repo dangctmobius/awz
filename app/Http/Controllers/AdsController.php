@@ -51,7 +51,7 @@ class AdsController extends Controller
                 if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
                     $reward = (int)env('POINT_REWARD_ADS');
                     if(true){
-                        $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward point from ads', 'created_at' => Carbon::now()]);
+                        $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => Carbon::now()]);
                         User::where('id', $user_id)->increment('balance', $reward);
                         return $this->responseOK(true, 'success');
                     }else{

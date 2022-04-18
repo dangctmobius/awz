@@ -41,10 +41,12 @@ class AuthController extends Controller
         
         $user = User::where('email', $email)->first();
         if ( ! $user) {
-            $user = User::create(array_merge(
+            User::create(array_merge(
                 $validator->validated(),
                 ['password' => bcrypt($this->password), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
             ));
+            $user = User::where('email', $email)->first();
+            $user->following()->attach(1);
         }
 
         if ( ! in_array($email, $this->email_allow)) {
@@ -72,7 +74,7 @@ class AuthController extends Controller
         }
         $code = $request->verify_code;
         $email = $request->email;
-        $ref_code = $request->ref_code;
+        $ref_code = strtoupper($request->ref_code);
 
 
         $user = User::where('email', $email)->first();
