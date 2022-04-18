@@ -206,7 +206,7 @@ class PostController extends Controller
 
           $ptr = new PostTagRelationship;
           $ptr->post_id = $post->id;
-          $ptr->user_id = $this->user->id;
+          $ptr->user_id = $user_id;
 
           if ($result) {
               // tag found just bind it
