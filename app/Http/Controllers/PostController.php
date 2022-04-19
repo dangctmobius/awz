@@ -143,7 +143,7 @@ class PostController extends Controller
             'content'   => 'required',
         ];
         $messages = [
-            'content.required'   => __('Yêu cầu điền nội dung bài viết'),
+            'content.required'   => __('Content require'),
         ];
         $validator = \Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {

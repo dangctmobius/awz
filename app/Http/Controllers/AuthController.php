@@ -79,27 +79,27 @@ class AuthController extends Controller
 
         $user = User::where('email', $email)->first();
 
-        if($user) {
-            if($user->ref_code) {
+        // if($user) {
+        //     if($user->ref_code) {
                 
 
-            } else {
-                if( $ref_code ) {
-                    if ($user->code != $ref_code) {
-                        $check_code = User::where('code', $ref_code)->first();
-                        if($check_code) {
-                            User::where('id', $user->id)->update(['ref_code' => $ref_code]);
-                        } else {
-                            return $this->responseError('Invalid referral code', 201);
-                        }
-                    } 
+        //     } else {
+        //         if( $ref_code ) {
+        //             if ($user->code != $ref_code) {
+        //                 $check_code = User::where('code', $ref_code)->first();
+        //                 if($check_code) {
+        //                     User::where('id', $user->id)->update(['ref_code' => $ref_code]);
+        //                 } else {
+        //                     return $this->responseError('Invalid referral code', 201);
+        //                 }
+        //             } 
 
-                } else {
-                    return $this->responseError('Referral code required', 201);
-                }
+        //         } else {
+        //             return $this->responseError('Referral code required', 201);
+        //         }
                
-            }
-        }
+        //     }
+        // }
         
         
         
