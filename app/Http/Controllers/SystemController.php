@@ -32,6 +32,11 @@ class SystemController extends Controller
         return $this->responseOK(env('APP_VERSION'), 'success');
     }
 
+    public function guest_token()
+    {
+        return $this->responseOK(env('GUEST_TOKEN'), 'success');
+    }
+
     /**
      * Store a newly created resource in storage.
      *

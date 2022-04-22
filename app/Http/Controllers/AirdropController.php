@@ -15,7 +15,7 @@ class AirdropController extends Controller
         $this->middleware(['check_token']);
         $this->user = auth()->user();
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +29,16 @@ class AirdropController extends Controller
         $user_id = $this->user->id;
         $data = [];
         $data['total'] = Airdrop::count();
-        $airdrops = Airdrop::where('status', 1)->skip($page*$limit )->take($limit)->get();
+        if($request->type && $request->type=='history') {
+            $airdrops = Airdrop::withCount('submits')->with(['submits' => function ($q) use($user_id) {
+                $q->where('airdrop_submits.user_id', $user_id);
+           }])->skip($page*$limit )->take($limit)->get();
+        } else {
+            $airdrops = Airdrop::where('status', 1)->withCount('submits')->with(['submits' => function ($q) use($user_id) {
+                $q->where('airdrop_submits.user_id', $user_id);
+           }])->skip($page*$limit )->take($limit)->get();
+        }
+       
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $airdrops;

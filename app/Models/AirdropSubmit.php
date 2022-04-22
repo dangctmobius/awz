@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Airdrop extends Model
+class AirdropSubmit extends Model
 {
     use HasFactory;
+    protected $table = 'airdrop_submits';
+
 
     public function submits() {
-        return $this->hasMany(AirdropSubmit::class);
+        return $this->belongTo(Airdrop::class);
     }
 }

@@ -15,6 +15,8 @@ use App\Http\Controllers\CashbackController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\AirdropController;
+use App\Http\Controllers\AirdropSubmitController;
+
 
 
 /*
@@ -120,6 +122,7 @@ Route::group([
     Route::get('/app_version', [SystemController::class, 'app_version']);   
     Route::get('/allow_function', [SystemController::class, 'allow_function']);   
     Route::get('/home_alert', [SystemController::class, 'home_alert']);  
+    Route::get('/guest', [SystemController::class, 'guest_token']);   
 
 });
 
@@ -189,4 +192,5 @@ Route::group([
 
 ], function ($router) {
     Route::get('/list', [AirdropController::class, 'list'])->middleware(['check_token','auth:api']);
+    Route::post('/submit', [AirdropSubmitController::class, 'submit'])->middleware(['check_token','auth:api']);
 });
