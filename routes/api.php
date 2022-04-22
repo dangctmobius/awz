@@ -14,6 +14,7 @@ use App\Http\Controllers\KycController;
 use App\Http\Controllers\CashbackController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\AirdropController;
 
 
 /*
@@ -179,4 +180,13 @@ Route::group([
 
 ], function ($router) {
     Route::get('/list/{type}', [BrandController::class, 'list'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'airdrop'
+
+], function ($router) {
+    Route::get('/list', [AirdropController::class, 'list'])->middleware(['check_token','auth:api']);
 });

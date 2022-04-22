@@ -13,7 +13,7 @@ class CheckToken
     {   
         $time_request = $request->time_request;
         $code = $request->code;
-        if (isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request)) === $code)
+        if (isset($time_request) && md5(md5(env('SECURITY_CODE').$time_request)) === $code)
         {   
             // $token = \DB::table('token_requests')->where('token', $code)->count();
             // if ($token > 0) {
