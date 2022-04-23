@@ -123,6 +123,7 @@ Route::group([
     Route::get('/allow_function', [SystemController::class, 'allow_function']);   
     Route::get('/home_alert', [SystemController::class, 'home_alert']);  
     Route::get('/guest', [SystemController::class, 'guest_token']);   
+    Route::get('/currency', [SystemController::class, 'currency']);   
 
 });
 
