@@ -30,13 +30,13 @@ class AdsController extends Controller
     public function earn(Request $request)
     {   
 
-        $validator = \Validator::make($request->all(), [
-            'g-recaptcha-response' => 'required|recaptcha'
-        ]);
+        // $validator = \Validator::make($request->all(), [
+        //     'g-recaptcha-response' => 'required|recaptcha'
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         $address = $this->user->address;
