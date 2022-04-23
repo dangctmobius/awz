@@ -351,7 +351,7 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
-        $data['spin_pool'] = 5000;
+        $data['spin_pool'] = env('POOL');
         if($earn) {
             $data['remain_pool'] = $data['spin_pool'] - $earn;
         } else {

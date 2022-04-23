@@ -46,7 +46,7 @@ class KycController extends Controller
             'name_owner' => 'required',
             'telegram' => 'required',
             'name_project' => 'required',
-            'g-recaptcha-response' => 'required|recaptcha'
+            // 'g-recaptcha-response' => 'required|recaptcha'
         ]);
 
         if ($validator->fails()) {
