@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Currency;
 class SystemController extends Controller
 {   
 
@@ -67,37 +67,16 @@ class SystemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function currency()
-    {
-        $data = [
-            [
-                'id' => 1,
-                'symbol' => 'CRONOAPE',
-                'address' => '0x06eb438c7fad0a49ce63235f7ee41f7dbc9b9db5'
-            ],
-            [
-                'id' => 2,
-                'symbol' => 'SAFUU',
-                'address' => '0xe5ba47fd94cb645ba4119222e34fb33f59c7cd90'
-            ],
-            [
-                'id' => 3,
-                'symbol' => 'RACA',
-                'address' => '0x12bb890508c125661e03b09ec06e404bc9289040'
-            ],
-            [
-                'id' => 4,
-                'symbol' => 'BabyDoge',
-                'address' => '0xc748673057861a797275CD8A068AbB95A902e8de'
-            ],
-            [
-                'id' => 5,
-                'symbol' => 'ZORO',
-                'address' => '0x05ad901cf196cbDCEaB3F8e602a47AAdB1a2e69d'
-            ],
-            
-        ];
+    {   
+        $currencies = Currency::where('status', 1)->get();
+       
+        if($currencies) {
+            return $this->responseOK(['items' => $currencies], 'success');
+        } 
+        return $this->responseError();
 
-        return $this->responseOK(['items' => $data], 'success');
+
+        
     }
 
     /**

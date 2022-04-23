@@ -275,9 +275,10 @@ class UserController extends Controller
     public function controller_check_vip()
     {   
         $address = $this->user->address;
-        if($address)
-        {   
-            $balance = $this->check_vip($address);
+        // if($address)
+        // {   
+            // $balance = $this->check_vip($address);
+            $balance = 0;
             if((int)$balance > 0)
             {
                 if ($balance > (int)env('AMOUNT_TOKEN_IS_PLATINUM'))
@@ -294,9 +295,9 @@ class UserController extends Controller
             } else {
                 return $this->responseOK(['is_vip' => 0], 'success');
             }
-        } else {
-            return $this->responseError('You have not connected the metamask wallet. Please connect your address!', 200);
-        }
+        // } else {
+        //     return $this->responseError('You have not connected the metamask wallet. Please connect your address!', 200);
+        // }
         
     }
 
@@ -319,8 +320,8 @@ class UserController extends Controller
 
         $user_id = $this->user->id;
         $address = $this->user->address;
-        if($address && $this->check_vip($address))
-        {   
+        // if($address && $this->check_vip($address))
+        // {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $spin = (int)env('LIMIT_REWARD_SPIN') - $total_earn;
@@ -328,7 +329,7 @@ class UserController extends Controller
                     $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
                     
                     $data['total_spin'] = $spin;
-                    $data['spin_pool'] = 5000;
+                    $data['spin_pool'] = (int)env('POOL');
                     if($earn) {
                         $data['remain_pool'] = $data['spin_pool'] - $earn;
                     }
@@ -338,9 +339,9 @@ class UserController extends Controller
                 return $this->responseError('You spin max daily.', 200);
             }
            
-        } else {
-            return $this->responseError('You\'re not a VIP member.', 200);
-        }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
 
@@ -366,15 +367,15 @@ class UserController extends Controller
 
         $user_id = $this->user->id;
         $address = $this->user->address;
-        if($address && $this->check_vip($address))
-        {   
+        // if($address && $this->check_vip($address))
+        // {   
             $rand_keys = array_rand($this->input, 1);
             
             return $this->responseOK($this->input[$rand_keys], 'success');
            
-        } else {
-            return $this->responseError('You\'re not a VIP member.', 200);
-        }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
     public function list_spin() 
@@ -382,15 +383,15 @@ class UserController extends Controller
 
         $user_id = $this->user->id;
         $address = $this->user->address;
-        if($address && $this->check_vip($address))
-        {   
+        // if($address && $this->check_vip($address))
+        // {   
             
             $data['items'] = $this->spin_list_item;
             return $this->responseOK($data, 'success');
            
-        } else {
-            return $this->responseError('You\'re not a VIP member.', 200);
-        }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
     public function earn_spin(Request $request) 
@@ -399,8 +400,8 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         $spin_code = $request->spin_code;
-        if($address && $this->check_vip($address))
-        {   
+        // if($address && $this->check_vip($address))
+        // {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $reward = 1;
@@ -416,9 +417,9 @@ class UserController extends Controller
             } else {
                 return $this->responseError('You spin max daily.', 200);
             }
-        } else {
-            return $this->responseError('You\'re not a VIP member.', 200);
-        }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
 
