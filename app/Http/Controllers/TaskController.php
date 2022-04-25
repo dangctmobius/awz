@@ -49,7 +49,8 @@ class TaskController extends Controller
         $user_id = $this->user->id;
 
         $address = $this->user->address;
-        if( $address &&  $this->check_vip($address))
+        $allow = true;
+        if( $allow || ($address &&  $this->check_vip($address)))
         {   
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
             if($total_earn < (int)env('MAX_VIP_CLICK_TASK')) {
