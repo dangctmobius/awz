@@ -78,8 +78,10 @@ class AuthController extends Controller
 
 
         $user = User::where('email', $email)->first();
-
-        if($user) {
+        
+        $turn_off_ref = false;
+        
+        if($turn_off_ref && $user) {
             if($user->ref_code) {
                 
 
