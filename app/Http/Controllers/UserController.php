@@ -21,7 +21,7 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,5,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,2,1,1,0,2,1,0,2,0,1,5);
+        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,7,1,0,2,0,1,5);
         $this->spin_list_item = [
             
             ['color' => '#29a8ab', 'value' => 2, 'label' =>  '$2'],
@@ -191,46 +191,51 @@ class UserController extends Controller
 
     public function address(Request $request)
     {   
-        try {
-            $token = JWTAuth::getToken();
-            $apy = JWTAuth::getPayload($token)->toArray();
-        } catch(\Exception $e){
-            echo json_encode(['error' => 'code 22']);
-            echo '<script>history.back();</script>';
-            die;
-        }
-        $time_request = $request->time_request;
-        $code = $request->code;
-        if(isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request) == $code))
-        {   $token = \DB::table('token_requests')->where('token', $code)->count();
-            // if (!$token > 0) {
-            //     echo json_encode(['error' => 'code 20']);
-            //     echo '<script>history.back();</script>';
-            //     die;
-            // }
-            // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
-        } else {
-            echo json_encode(['error' => 'code 21']);
-            echo '<script>history.back();</script>';
-            die;
-        }
+        // try {
+        //     $token = JWTAuth::getToken();
+        //     $apy = JWTAuth::getPayload($token)->toArray();
+        // } catch(\Exception $e){
+        //     echo json_encode(['error' => 'code 22']);
+        //     echo '<script>history.back();</script>';
+        //     die;
+        // }
+        // $time_request = $request->time_request;
+        // $code = $request->code;
+        // if(isset($time_request) && md5(md5(env('SECURITY_CODE') . env('APP_VERSION') .$time_request) == $code))
+        // {   $token = \DB::table('token_requests')->where('token', $code)->count();
+        //     // if (!$token > 0) {
+        //     //     echo json_encode(['error' => 'code 20']);
+        //     //     echo '<script>history.back();</script>';
+        //     //     die;
+        //     // }
+        //     // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+        // } else {
+        //     echo json_encode(['error' => 'code 21']);
+        //     echo '<script>history.back();</script>';
+        //     die;
+        // }
 
-        $email = $request->email;
+        // $email = $request->email;
         $address = $request->address;
         
         $data = [
         'address' => $address ?? '',
         ];
-        $update = User::where('email', $email)->update($data);
+
+        if ($this->user->address) {
+            return $this->responseError('You are connected address '.$this->user->address, 200);
+        }
+
+        $update = User::where('id', $this->user->id)->update($data);
         // $user = User::where('email', $email)->first();
         // $data = [];
         // $data['item'] = $user;
         if($update) {
-            // return $this->responseOK(null, 'success');
-            return \Redirect::to('https://connect.azworld.network?connect=success');
+            return $this->responseOK('Update wallet address success');
+            // return \Redirect::to('https://connect.azworld.network?connect=success');
         } else {
-            // return $this->responseError();
-            return \Redirect::to('https://connect.azworld.network?connect=error');
+            return $this->responseError('Update wallet address error', 200);
+            // return \Redirect::to('https://connect.azworld.network?connect=error');
         }
     }
 

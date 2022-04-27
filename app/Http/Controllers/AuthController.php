@@ -152,7 +152,7 @@ class AuthController extends Controller
 
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-                if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $request->pass ])) {
+                if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => ($request->pass) ])) {
                     return $this->responseError('Incorrect email or password', 201);
                 }
                 
