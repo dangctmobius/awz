@@ -30,7 +30,7 @@ class AuthController extends Controller
     public function verify(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email'
+            'email' => 'required|email',
             'pass' => 'required|min:6'
         ]);
 
@@ -65,6 +65,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    
     public function register(Request $request){
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -77,36 +78,7 @@ class AuthController extends Controller
         }
         $code = $request->verify_code;
         $email = $request->email;
-        $ref_code = strtoupper($request->ref_code);
-
-
-        $user = User::where('email', $email)->first();
-        
-        $turn_off_ref = false;
-
-        if($turn_off_ref && $user) {
-            if($user->ref_code) {
-                
-
-            } else {
-                if( $ref_code ) {
-                    if ($user->code != $ref_code) {
-                        $check_code = User::where('code', $ref_code)->first();
-                        if($check_code) {
-                            User::where('id', $user->id)->update(['ref_code' => $ref_code]);
-                        } else {
-                            return $this->responseError('Invalid referral code', 201);
-                        }
-                    } 
-
-                } else {
-                    return $this->responseError('Referral code required', 201);
-                }
-               
-            }
-        }
-        
-        
+        $ref_code = strtoupper($request->ref_code);        
         
         if ( ! in_array($email, $this->email_allow)) {
 
@@ -123,6 +95,31 @@ class AuthController extends Controller
                     $user->following()->attach(1);
                 } else {
                     return $this->responseError('User already exists!', 201);
+                }
+
+
+                $user = User::where('email', $email)->first();
+                if($user) {
+                    if($user->ref_code) {
+                        
+        
+                    } else {
+                        // if( $ref_code ) {
+                            if ($user->code != $ref_code) {
+                                $check_code = User::where('code', $ref_code)->first();
+                                if($check_code) {
+                                    User::where('id', $user->id)->update(['ref_code' => $ref_code]);
+                                }
+                                //  else {
+                                //     return $this->responseError('Invalid referral code', 201);
+                                // }
+                            } 
+        
+                        // } else {
+                        //     return $this->responseError('Referral code required', 201);
+                        // }
+                       
+                    }
                 }
                 
                 return $this->responseOK("Register new account success!", 200);
@@ -156,8 +153,7 @@ class AuthController extends Controller
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $request->pass ])) {
-                    
-                    return $this->responseError('Unauthorized1', 201);
+                    return $this->responseError('Incorrect email or password', 201);
                 }
                 
                 return $this->respondWithToken($token, Auth::user());
@@ -169,32 +165,27 @@ class AuthController extends Controller
         
     }
 
-    /**
-     * Register a User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
+    // public function register(Request $request) {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|between:2,100',
+    //         'email' => 'required|string|email|max:50|unique:users',
+    //         'password' => 'required|string|confirmed|min:6|max:30'
+    //     ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+    //     if($validator->fails()){
+    //         return response()->json($validator->errors()->toJson(), 400);
+    //     }
 
-        $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => bcrypt($request->password)]
-                ));
+    //     $user = User::create(array_merge(
+    //                 $validator->validated(),
+    //                 ['password' => bcrypt($request->password)]
+    //             ));
 
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
-    }
+    //     return response()->json([
+    //         'message' => 'User successfully registered',
+    //         'user' => $user
+    //     ], 201);
+    // }
 
 
     /**
