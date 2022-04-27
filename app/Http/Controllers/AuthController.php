@@ -31,6 +31,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email'
+            'pass' => 'required|min:6'
         ]);
 
         if ($validator->fails()) {
@@ -41,12 +42,14 @@ class AuthController extends Controller
         
         $user = User::where('email', $email)->first();
         if ( ! $user) {
-            User::create(array_merge(
-                $validator->validated(),
-                ['password' => bcrypt($this->password), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
-            ));
-            $user = User::where('email', $email)->first();
-            $user->following()->attach(1);
+            // User::create(array_merge(
+            //     $validator->validated(),
+            //     ['password' => bcrypt($request->pass), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
+            // ));
+            // $user = User::where('email', $email)->first();
+            // $user->following()->attach(1);
+        } else {
+            return $this->responseError('User already exists!', 201);
         }
 
         if ( ! in_array($email, $this->email_allow)) {
@@ -56,16 +59,16 @@ class AuthController extends Controller
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
         }
-        
     }
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request){
+    public function register(Request $request){
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
+            'pass' => 'required|min:6',
             'code' => 'required|string|min:6',
         ]);
 
@@ -80,7 +83,7 @@ class AuthController extends Controller
         $user = User::where('email', $email)->first();
         
         $turn_off_ref = false;
-        
+
         if($turn_off_ref && $user) {
             if($user->ref_code) {
                 
@@ -109,21 +112,57 @@ class AuthController extends Controller
 
             if (VerificationCode::verify($code, $email))
             {   
+
+                $user = User::where('email', $email)->first();
+                if ( ! $user) {
+                    User::create(array_merge(
+                        $validator->validated(),
+                        ['password' => bcrypt($request->pass), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
+                    ));
+                    $user = User::where('email', $email)->first();
+                    $user->following()->attach(1);
+                } else {
+                    return $this->responseError('User already exists!', 201);
+                }
+                
+                return $this->responseOK("Register new account success!", 200);
+
+            } else {
+
+                return $this->responseError('Verification code is incorrect', 201);
+            }
+        } else {
+            return $this->responseError('Please contact admin for Beta Test!', 201);
+        }
+        
+    }
+
+
+    public function login(Request $request){
+    	$validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'pass' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $email = $request->email;
+        
+        if ( ! in_array($email, $this->email_allow)) {
+
                 $credentials = $request->only(['email']);
 
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-                if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $this->password ])) {
+                if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => $request->pass ])) {
                     
                     return $this->responseError('Unauthorized1', 201);
                 }
                 
                 return $this->respondWithToken($token, Auth::user());
 
-            } else {
 
-                return $this->responseError('Verification code is incorrect', 201);
-            }
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
         }

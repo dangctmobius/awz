@@ -21,7 +21,7 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,1,0,0,1,2,2,1,5,0,2,3,5,4,2,1,2,3,2,3,1,6,4,5,3,2,1,3,3,7,1,1,3,2,1,3,3);
+        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,5,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,2,1,1,0,2,1,0,2,0,1,5);
         $this->spin_list_item = [
             
             ['color' => '#29a8ab', 'value' => 2, 'label' =>  '$2'],
