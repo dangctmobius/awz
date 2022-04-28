@@ -55,7 +55,7 @@ class SystemController extends Controller
 
     public function home_alert(Request $request)
     {
-        $data = '';
+        $data = env("HOME_NOTICE");
 
         return $this->responseOK($data, 'success');
     }
