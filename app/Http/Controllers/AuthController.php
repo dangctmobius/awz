@@ -39,18 +39,15 @@ class AuthController extends Controller
         }
 
         $email = $request->email;
-        
-        $user = User::where('email', $email)->first();
-        if ( ! $user) {
-            // User::create(array_merge(
-            //     $validator->validated(),
-            //     ['password' => bcrypt($request->pass), 'code' => $this->genCode(6), 'name' => env('APP_NAME').'_'.rand(10000,99999)]
-            // ));
-            // $user = User::where('email', $email)->first();
-            // $user->following()->attach(1);
-        } else {
-            return $this->responseError('User already exists!', 201);
+        if(!$request->changepass)
+        {
+            $user = User::where('email', $email)->first();
+            if ( ! $user) {
+            } else {
+                return $this->responseError('User already exists!', 201);
+            }
         }
+        
 
         if ( ! in_array($email, $this->email_allow)) {
             \Queue::push(new SentMailVerify($email));
@@ -123,6 +120,47 @@ class AuthController extends Controller
                 }
                 
                 return $this->responseOK("Register new account success!", 200);
+
+            } else {
+
+                return $this->responseError('Verification code is incorrect', 201);
+            }
+        } else {
+            return $this->responseError('Please contact admin for Beta Test!', 201);
+        }
+        
+    }
+
+
+    public function changepass(Request $request){
+    	$validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'pass' => 'required|min:6',
+            'code' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $code = $request->verify_code;
+        $email = $request->email;
+        $ref_code = strtoupper($request->ref_code);        
+        
+        if ( ! in_array($email, $this->email_allow)) {
+
+            if (VerificationCode::verify($code, $email))
+            {   
+                
+                $user = User::where('email', $email)->first();
+                if ($user) {
+                    User::where('email', $email)->update(
+                        ['password' => bcrypt($request->pass)]
+                    );
+                } else {
+                    return $this->responseError('The account does not exist!', 201);
+                }
+
+                return $this->responseOK("Change new password success!", 200);
 
             } else {
 
