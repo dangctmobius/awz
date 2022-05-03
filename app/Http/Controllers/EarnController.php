@@ -42,7 +42,7 @@ class EarnController extends Controller
         }
         $data = [];
         $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', $subjects)->skip($page*$limit)->take($limit)->get();
+        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;

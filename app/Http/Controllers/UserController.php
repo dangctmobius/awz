@@ -268,11 +268,11 @@ class UserController extends Controller
         {
             $response = $this->bscCheckBalance($address);
             if ($response && $response['message'] == 'OK') {
-                $data = $response['result'];
+                $data = $response['result'] / 10 ** env('CONTRACT_DEC');
                 return $this->responseOK($data, 'success');
             }
         } else {
-            return $this->responseError('You have not connected the metamask wallet. Please connect your address!', 200);
+            return $this->responseOK('You have not connected the metamask wallet. Please connect your address!', 200);
         }
         
     }
