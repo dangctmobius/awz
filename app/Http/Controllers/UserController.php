@@ -372,15 +372,15 @@ class UserController extends Controller
 
         $user_id = $this->user->id;
         $address = $this->user->address;
-        if($address && $this->check_vip($address))
-        {   
+        // if($address && $this->check_vip($address))
+        // {   
             $rand_keys = array_rand($this->input, 1);
             
             return $this->responseOK($this->input[$rand_keys], 'success');
            
-        } else {
-            return $this->responseError('You\'re not a VIP member.', 200);
-        }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
     public function list_spin() 
