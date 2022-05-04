@@ -155,8 +155,8 @@ class Controller extends BaseController
             $response = $this->bscCheckBalance($address);
             if ($response && $response['message'] == 'OK') {
                 $data = $response['result'];
-                $decimal = (int)env('CONTRACT_DEC');
-                if( ($data / 10**$decimal) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
+                $decimal =  10 ** (int)env('CONTRACT_DEC');
+                if( ($data / $decimal) >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
                     return $data / 10**$decimal;
                 } else {
                     return 0;
