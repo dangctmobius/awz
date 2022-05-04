@@ -106,6 +106,7 @@ class AuthController extends Controller
                                 $check_code = User::where('code', $ref_code)->first();
                                 if($check_code) {
                                     User::where('id', $user->id)->update(['ref_code' => $ref_code]);
+                                    \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 2, 'reward' => 1, 'subject' => 'ref', 'description' => 'Reward for ref', 'created_at' => Carbon::now()]);
                                 }
                                 //  else {
                                 //     return $this->responseError('Invalid referral code', 201);

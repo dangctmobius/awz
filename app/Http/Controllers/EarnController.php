@@ -30,13 +30,17 @@ class EarnController extends Controller
         $user_id = $this->user->id;
         
         if($subject == 1) {
-            $subjects = ['tasks', 'spin', 'ads'];
+            $subjects = ['tasks', 'spin', 'ads', 'donate', 'ref'];
         } else if ($subject == 2)  {
             $subjects = ['tasks'];
         } else if ($subject == 3) {
             $subjects = ['ads'];
         } else if ($subject == 4) {
             $subjects = ['spin'];
+        } else if ($subject == 5) {
+            $subjects = ['donate'];
+        } else if ($subject == 6) {
+            $subjects = ['ref'];
         } else {
             $subjects = [];
         }

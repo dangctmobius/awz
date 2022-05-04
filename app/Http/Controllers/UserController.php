@@ -24,14 +24,14 @@ class UserController extends Controller
         $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,7,1,0,2,0,1,5);
         $this->spin_list_item = [
             
-            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '$2'],
-            ['color' => '#fed766', 'value' => 5, 'label' => '$5'],
-            ['color' => '#011f4b', 'value' => 10, 'label' =>  '$10'],
-            ['color' => '#03396c', 'value' => 15, 'label' =>  '$15'],
-            ['color' => '#851e3e', 'value' => 20, 'label' =>  '$20'],
-            ['color' => '#009688', 'value' => 25, 'label' =>  '$25'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '$30'],
-            ['color' => '#2ab7ca', 'value' => 50, 'label' => '$50']
+            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2 TAZW'],
+            ['color' => '#fed766', 'value' => 5, 'label' => '5 TAZW'],
+            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10 TAZW'],
+            ['color' => '#03396c', 'value' => 15, 'label' =>  '15 TAZW'],
+            ['color' => '#851e3e', 'value' => 20, 'label' =>  '20 TAZW'],
+            ['color' => '#009688', 'value' => 25, 'label' =>  '25 TAZW'],
+            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30 TAZW'],
+            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50 TAZW']
         ];
     }
 
@@ -502,6 +502,31 @@ class UserController extends Controller
         }
 
         return $this->responseOK($data, 'success');
+
+    }
+
+
+    public function donate(Request $request) 
+    {
+
+        $user_id = $this->user->id;
+        $amount = (double)$request->amount;
+        $post_id = $request->post_id;
+        $influ_id = Post::where('id', $post_id)->first();
+
+        $myBalance = (double)$this->user->balance;
+        if($myBalance >= $amount) {
+            
+            $influ = User::where('id', $influ_id->user_id)->increment('balance', $amount);
+            $my_user = User::where('id', $user_id)->decrement('balance', $amount);
+            \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => -($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
+            \DB::table('earns')->insert(['user_id' => $influ_id->user_id, 'status' => 2, 'reward' => ($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
+
+        }  else {
+            return $this->responseError("You don\'t have enough balance to donate", 200);
+        }
+        $my_user = User::where('id', $user_id)->first();
+        return $this->responseOK($my_user, 'success');
 
     }
 

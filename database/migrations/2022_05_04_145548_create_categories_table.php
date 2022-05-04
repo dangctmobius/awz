@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVoteCurrenciesTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateVoteCurrenciesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vote_currencies', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('currency_id');
-            $table->integer('vote');
+            $table->string('name');
+            $table->text('description');
+            $table->text('image_url');
+            $table->integer('status');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateVoteCurrenciesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vote_currencies');
+        Schema::dropIfExists('categories');
     }
 }

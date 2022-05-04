@@ -16,6 +16,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\AirdropController;
 use App\Http\Controllers\AirdropSubmitController;
+use App\Http\Controllers\ProductController;
 
 
 
@@ -112,6 +113,7 @@ Route::group([
 
 
     Route::get('/other_info/{id}', [UserController::class, 'other_info'])->middleware(['check_token','auth:api']);
+    Route::post('/donate', [UserController::class, 'donate'])->middleware(['check_token','auth:api']);
 });
 
 Route::group([
@@ -194,4 +196,14 @@ Route::group([
 ], function ($router) {
     Route::get('/list', [AirdropController::class, 'list'])->middleware(['check_token','auth:api']);
     Route::post('/submit', [AirdropSubmitController::class, 'submit'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'product'
+
+], function ($router) {
+    Route::get('/list', [ProductController::class, 'list'])->middleware(['check_token','auth:api']);
+    Route::get('/detail/{id}', [ProductController::class, 'detail'])->middleware(['check_token','auth:api']);
 });
