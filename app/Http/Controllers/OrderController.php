@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Jobs\SendMail;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class OrderController extends Controller
 {
@@ -20,11 +22,20 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $orders = Order::where('user_id', $this->user->id)->with('product')->get();
-        return $this->responseOK($orders);
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $orders = Order::where('status', 1)->where('user_id', $this->user->id)->with('product')->orderBy('id','desc')->skip($page*$limit )->take($limit)->get();
+        $data = [];
+        $data['count'] = Product::count();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $orders;
+        return $this->responseOK($data);
+        
+        $data['items'] = $orders;
+        return $this->responseOK($data);
     }
 
     /**
@@ -63,18 +74,31 @@ class OrderController extends Controller
             'qty' => '1',
             'status' => '1',
         ];
-        $date = Order::create($data)->created_at;
 
         $product = Product::where('id', $request->product_id)->first();
 
-        $order['name'] = $product->name;
-        $order['qty'] = 1;
-        $order['price'] = $product->price;
-        $order['image'] = $product->image_url;
-        $order['date'] = $date;
+        $amount = (double)$product->price;
 
-        \Queue::push(new SendMail($this->user->email, $order));
-        return $this->responseOK($data);
+        $myBalance = (double)$this->user->balance;
+        if($myBalance >= $amount) {
+            $date = Order::create($data)->created_at;
+            
+
+            $my_user = User::where('id', $this->user->id)->decrement('balance', $amount);
+            \DB::table('earns')->insert(['user_id' => $this->user->id, 'status' => 2, 'reward' => -($amount), 'subject' => 'shop', 'description' => 'Buy for product', 'created_at' => Carbon::now()]);
+
+            $order['name'] = $product->name;
+            $order['qty'] = 1;
+            $order['price'] = $product->price;
+            $order['image'] = $product->image_url;
+            $order['date'] = $date;
+
+            \Queue::push(new SendMail($this->user->email, $order));
+            return $this->responseOK($data);
+        } else {
+            return $this->responseError("You don\'t have enough balance to buy this product", 200);
+        }
+        
     }
 
     /**
