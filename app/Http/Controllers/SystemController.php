@@ -28,8 +28,15 @@ class SystemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function app_version()
-    {
-        return $this->responseOK(env('APP_VERSION'), 'success');
+    {   
+        $data = [
+            'version' => env('APP_VERSION'),
+            'home_banner' => 'https://azworld.network/images/home_item.png',
+            'symbol' => 'AZW',
+            'min_vip' => env('AMOUNT_TOKEN_IS_VIP'),
+        ];
+
+        return $this->responseOK($data, 'success');
     }
 
     public function guest_token()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Earn;
+use Illuminate\Support\Carbon;
 
 class EarnController extends Controller
 {   
@@ -47,6 +48,38 @@ class EarnController extends Controller
         $data = [];
         $data['total'] = Earn::count();
         $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+        $data['items'] = $products;
+        return $this->responseOK($data);
+    }
+
+    public function list_today(Request $request)
+    {
+        $page = $request->page ? (int)$request->page : 0;
+        $limit = $request->limit ? (int)$request->limit : 20;
+        $category = $request->category ? (int)$request->category : 1;
+        $subject = $request->subject;
+        $user_id = $this->user->id;
+        
+        if($subject == 1) {
+            $subjects = ['tasks', 'spin', 'ads', 'donate', 'ref'];
+        } else if ($subject == 2)  {
+            $subjects = ['tasks'];
+        } else if ($subject == 3) {
+            $subjects = ['ads'];
+        } else if ($subject == 4) {
+            $subjects = ['spin'];
+        } else if ($subject == 5) {
+            $subjects = ['donate'];
+        } else if ($subject == 6) {
+            $subjects = ['ref'];
+        } else {
+            $subjects = [];
+        }
+        $data = [];
+        $data['total'] = Earn::count();
+        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;

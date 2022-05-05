@@ -283,7 +283,7 @@ class UserController extends Controller
         if($address)
         {   
             $balance = $this->check_vip($address);
-            $balance = 0;
+            // $balance = 0;
             if((int)$balance > 0)
             {
                 if ($balance >= (int)env('AMOUNT_TOKEN_IS_VIP_3'))
