@@ -24,14 +24,14 @@ class UserController extends Controller
         $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,7,1,0,2,0,1,5);
         $this->spin_list_item = [
             
-            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2 TAZW'],
-            ['color' => '#fed766', 'value' => 5, 'label' => '5 TAZW'],
-            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10 TAZW'],
-            ['color' => '#03396c', 'value' => 15, 'label' =>  '15 TAZW'],
-            ['color' => '#851e3e', 'value' => 20, 'label' =>  '20 TAZW'],
-            ['color' => '#009688', 'value' => 25, 'label' =>  '25 TAZW'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30 TAZW'],
-            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50 TAZW']
+            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2'],
+            ['color' => '#fed766', 'value' => 5, 'label' => '5'],
+            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10'],
+            ['color' => '#03396c', 'value' => 15, 'label' =>  '15'],
+            ['color' => '#851e3e', 'value' => 20, 'label' =>  '20'],
+            ['color' => '#009688', 'value' => 25, 'label' =>  '25'],
+            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30'],
+            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50']
         ];
     }
 
@@ -360,7 +360,7 @@ class UserController extends Controller
         $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
         $data['spin_pool'] = env('POOL');
         if($earn) {
-            $data['remain_pool'] = $data['spin_pool'] - $earn;
+            $data['remain_pool'] = ($data['spin_pool'] - $earn) < 0 ? 0 : ($data['spin_pool'] - $earn) ;
         } else {
             $data['remain_pool'] = $data['spin_pool'];
         }
@@ -408,7 +408,11 @@ class UserController extends Controller
         $address = $this->user->address;
         $spin_code = $request->spin_code;
         if($address && $this->check_vip($address))
-        {   
+        {   $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+            $pool = env('POOL');
+            if(($data['spin_pool'] - $earn) <= 0) {
+                return $this->responseError('Max pool reward.', 200);
+            }
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $reward = 1;
