@@ -47,7 +47,7 @@ class AuthController extends Controller
                 return $this->responseError('User already exists!', 201);
             }
         }
-        
+
 
         if ( ! in_array($email, $this->email_allow)) {
             \Queue::push(new SentMailVerify($email));
@@ -62,12 +62,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    
+
     public function register(Request $request){
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'pass' => 'required|min:6',
-            'code' => 'required|string|min:6',
+            'verify_code' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -75,12 +75,12 @@ class AuthController extends Controller
         }
         $code = $request->verify_code;
         $email = $request->email;
-        $ref_code = strtoupper($request->ref_code);        
-        
+        $ref_code = strtoupper($request->ref_code);
+
         if ( ! in_array($email, $this->email_allow)) {
 
             if (VerificationCode::verify($code, $email))
-            {   
+            {
 
                 $user = User::where('email', $email)->first();
                 if ( ! $user) {
@@ -98,8 +98,8 @@ class AuthController extends Controller
                 $user = User::where('email', $email)->first();
                 if($user) {
                     if($user->ref_code) {
-                        
-        
+
+
                     } else {
                         // if( $ref_code ) {
                             if ($user->code != $ref_code) {
@@ -111,15 +111,15 @@ class AuthController extends Controller
                                 //  else {
                                 //     return $this->responseError('Invalid referral code', 201);
                                 // }
-                            } 
-        
+                            }
+
                         // } else {
                         //     return $this->responseError('Referral code required', 201);
                         // }
-                       
+
                     }
                 }
-                
+
                 return $this->responseOK("Register new account success!", 200);
 
             } else {
@@ -129,7 +129,7 @@ class AuthController extends Controller
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
         }
-        
+
     }
 
 
@@ -145,13 +145,13 @@ class AuthController extends Controller
         }
         $code = $request->verify_code;
         $email = $request->email;
-        $ref_code = strtoupper($request->ref_code);        
-        
+        $ref_code = strtoupper($request->ref_code);
+
         if ( ! in_array($email, $this->email_allow)) {
 
             if (VerificationCode::verify($code, $email))
-            {   
-                
+            {
+
                 $user = User::where('email', $email)->first();
                 if ($user) {
                     User::where('email', $email)->update(
@@ -170,7 +170,7 @@ class AuthController extends Controller
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
         }
-        
+
     }
 
 
@@ -184,7 +184,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $email = $request->email;
-        
+
         if ( ! in_array($email, $this->email_allow)) {
 
                 $credentials = $request->only(['email']);
@@ -194,14 +194,14 @@ class AuthController extends Controller
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => ($request->pass) ])) {
                     return $this->responseError('Incorrect email or password', 201);
                 }
-                
+
                 return $this->respondWithToken($token, Auth::user());
 
 
         } else {
             return $this->responseError('Please contact admin for Beta Test!', 201);
         }
-        
+
     }
 
     // public function register(Request $request) {

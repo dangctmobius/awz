@@ -16,6 +16,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\AirdropController;
 use App\Http\Controllers\AirdropSubmitController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 
 
@@ -47,7 +48,7 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/changepass', [AuthController::class, 'changepass']);    
+    Route::post('/changepass', [AuthController::class, 'changepass']);
 });
 
 
@@ -56,15 +57,15 @@ Route::group([
     'prefix' => 'post'
 
 ], function ($router) {
-    Route::get('/list', [PostController::class, 'index'])->middleware(['check_token','auth:api']);   
-    Route::get('/list_by_tag', [PostController::class, 'list_by_tag'])->middleware(['check_token','auth:api']);  
+    Route::get('/list', [PostController::class, 'index'])->middleware(['check_token','auth:api']);
+    Route::get('/list_by_tag', [PostController::class, 'list_by_tag'])->middleware(['check_token','auth:api']);
     Route::post('/add', [PostController::class, 'store'])->middleware(['check_token','auth:api']);
-    Route::post('/like/{id}', [PostController::class, 'like'])->middleware(['check_token','auth:api']);   
-    Route::post('/unlike/{id}', [PostController::class, 'unlike'])->middleware(['check_token','auth:api']);   
-    Route::post('/delete/{id}', [PostController::class, 'destroy'])->middleware(['check_token','auth:api']);  
-    
-    
-    Route::get('/list/by_user/{id}', [PostController::class, 'get_list_by_user'])->middleware(['check_token','auth:api']);  
+    Route::post('/like/{id}', [PostController::class, 'like'])->middleware(['check_token','auth:api']);
+    Route::post('/unlike/{id}', [PostController::class, 'unlike'])->middleware(['check_token','auth:api']);
+    Route::post('/delete/{id}', [PostController::class, 'destroy'])->middleware(['check_token','auth:api']);
+
+
+    Route::get('/list/by_user/{id}', [PostController::class, 'get_list_by_user'])->middleware(['check_token','auth:api']);
 });
 
 
@@ -81,8 +82,8 @@ Route::group([
     'prefix' => 'comment'
 
 ], function ($router) {
-    Route::get('/list/{post_id}', [CommentController::class, 'get_comment_by_post_id'])->middleware(['check_token','auth:api']);   
-    Route::post('/add', [CommentController::class, 'store'])->middleware(['check_token','auth:api']);   
+    Route::get('/list/{post_id}', [CommentController::class, 'get_comment_by_post_id'])->middleware(['check_token','auth:api']);
+    Route::post('/add', [CommentController::class, 'store'])->middleware(['check_token','auth:api']);
 });
 
 
@@ -91,7 +92,7 @@ Route::group([
     'prefix' => 'user'
 
 ], function ($router) {
-    Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);   
+    Route::get('/posts', [UserController::class, 'listPost'])->middleware(['check_token','auth:api']);
     Route::get('/info', [UserController::class, 'info'])->middleware(['check_token','auth:api']);
     Route::post('/update', [UserController::class, 'update']);
     Route::post('/address', [UserController::class, 'address'])->middleware(['check_token','auth:api','cors']);;
@@ -121,11 +122,11 @@ Route::group([
     'prefix' => 'system'
 
 ], function ($router) {
-    Route::get('/app_version', [SystemController::class, 'app_version']);   
-    Route::get('/allow_function', [SystemController::class, 'allow_function']);   
-    Route::get('/home_alert', [SystemController::class, 'home_alert']);  
-    Route::get('/guest', [SystemController::class, 'guest_token']);   
-    Route::get('/currency', [SystemController::class, 'currency']);   
+    Route::get('/app_version', [SystemController::class, 'app_version']);
+    Route::get('/allow_function', [SystemController::class, 'allow_function']);
+    Route::get('/home_alert', [SystemController::class, 'home_alert']);
+    Route::get('/guest', [SystemController::class, 'guest_token']);
+    Route::get('/currency', [SystemController::class, 'currency']);
 
 });
 
@@ -205,6 +206,16 @@ Route::group([
     'prefix' => 'product'
 
 ], function ($router) {
+    Route::post('/order', [OrderController::class, 'store'])->middleware(['check_token','auth:api']);
     Route::get('/list', [ProductController::class, 'list'])->middleware(['check_token','auth:api']);
     Route::get('/detail/{id}', [ProductController::class, 'detail'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'order'
+
+], function ($router) {
+    Route::get('/list', [OrderController::class, 'index'])->middleware(['check_token','auth:api']);
 });

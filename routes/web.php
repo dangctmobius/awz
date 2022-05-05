@@ -22,3 +22,7 @@ Route::get('login', function () {
 })->name('login');
 
 Route::get('/verify/{email}', [VerifyEmailCodeController::class, 'verify']);
+
+Route::get('/demo', function(){
+    return view(('mail_send'));
+});
