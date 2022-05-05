@@ -79,7 +79,11 @@ class EarnController extends Controller
         }
         $data = [];
         $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref'])->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $total_earn_today = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref'])->whereDate('created_at', '=', Carbon::today())->sum('reward');
+        foreach($products as &$product) {
+            $product['total_earn'] = $total_earn_today;
+        }
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
