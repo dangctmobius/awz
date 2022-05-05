@@ -408,11 +408,7 @@ class UserController extends Controller
         $address = $this->user->address;
         $spin_code = $request->spin_code;
         if($address && $this->check_vip($address))
-        {   $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
-            $pool = env('POOL');
-            if(($data['spin_pool'] - $earn) <= 0) {
-                return $this->responseError('Max pool reward.', 200);
-            }
+        {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $reward = 1;
@@ -421,6 +417,11 @@ class UserController extends Controller
                             $reward = $item;
                             break;
                         }
+                    }
+                    $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+                    $pool = env('POOL');
+                    if((($data['spin_pool'] - $earn) - $spin_list_item[$reward]['value'])  <= 0 ) {
+                        return $this->responseError('Max pool reward.', 200);
                     }
                     $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance',  $this->spin_list_item[$reward]['value']);
