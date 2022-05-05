@@ -24,14 +24,14 @@ class UserController extends Controller
         $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,7,1,0,2,0,1,5);
         $this->spin_list_item = [
             
-            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2'],
-            ['color' => '#fed766', 'value' => 5, 'label' => '5'],
-            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10'],
-            ['color' => '#03396c', 'value' => 15, 'label' =>  '15'],
-            ['color' => '#851e3e', 'value' => 20, 'label' =>  '20'],
-            ['color' => '#009688', 'value' => 25, 'label' =>  '25'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30'],
-            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50']
+            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2 AZW'],
+            ['color' => '#fed766', 'value' => 5, 'label' => '5 AZW'],
+            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10 AZW'],
+            ['color' => '#03396c', 'value' => 15, 'label' =>  '15 AZW'],
+            ['color' => '#851e3e', 'value' => 20, 'label' =>  '20 AZW'],
+            ['color' => '#009688', 'value' => 25, 'label' =>  '25 AZW'],
+            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30 AZW'],
+            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50 AZW']
         ];
     }
 
