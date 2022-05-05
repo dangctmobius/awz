@@ -29,9 +29,9 @@ class UserController extends Controller
             ['color' => '#011f4b', 'value' => 10, 'label' =>  '10'],
             ['color' => '#03396c', 'value' => 15, 'label' =>  '15'],
             ['color' => '#851e3e', 'value' => 20, 'label' =>  '20'],
-            ['color' => '#009688', 'value' => 25, 'label' =>  '25 AZW'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30 AZW'],
-            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50 AZW']
+            ['color' => '#009688', 'value' => 25, 'label' =>  '25'],
+            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30'],
+            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50']
         ];
     }
 
