@@ -32,6 +32,7 @@ class SystemController extends Controller
         $data = [
             'version' => env('APP_VERSION'),
             'home_banner' => 'https://azworld.network/images/home_item.png',
+            'member_banner' => 'https://azworld.network/images/member.jpeg',
             'symbol' => 'AZW',
             'min_vip' => env('AMOUNT_TOKEN_IS_VIP'),
         ];
