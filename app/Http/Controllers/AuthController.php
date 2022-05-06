@@ -8,6 +8,7 @@ use App\Models\User;
 use Validator;
 use NextApps\VerificationCode\VerificationCode;
 use App\Jobs\SentMailVerify;
+use Illuminate\Support\Carbon;
 
 class AuthController extends Controller
 {
