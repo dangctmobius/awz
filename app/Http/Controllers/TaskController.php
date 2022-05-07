@@ -28,8 +28,9 @@ class TaskController extends Controller
         $category = $request->category ? (int)$request->category : 1;
         $user_id = $this->user->id;
         $data = [];
+        $subject = $request->subject;
         $data['total'] = Task::count();
-        $products = Task::where('status', 1)->where('category', $category)->orderBy('id', 'desc')->with(['user' => function ($q) use($user_id) {
+        $products = Task::where('status', 1)->where('category', $category)->where('subject', $subject)->orderBy('id', 'desc')->with(['user' => function ($q) use($user_id) {
                 $q->where('user_ptc_task.user_id', $user_id);
         }])->skip($page*$limit )->take($limit)->get();
         $data['page'] = $page;
