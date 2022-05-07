@@ -37,7 +37,7 @@ class SystemController extends Controller
             'min_vip' => env('AMOUNT_TOKEN_IS_VIP'),
             'page_ref_text' => 'Send a referral link to your friend\nIf the people you refer go shopping - You will get up to 20% Cashback commission  in  that order\nMax 5 users / day',
             'page_ref_how_it_work' => 'A referral program is a system that incentivizes previous customers to recommend your products to their family and friends. Retail stores create their own referral programs as a way to reach more people. It\'s a marketing strategy that asks previous happy, loyal customers to become brand advocates',
-            'page_wheel_text' => ''
+            'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').', which will decrease after each spin.'
         ];
 
         return $this->responseOK($data, 'success');
