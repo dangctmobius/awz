@@ -222,7 +222,7 @@ class UserController extends Controller
         'address' => $address ?? '',
         ];
 
-        if ($this->user->address) {
+        if ($this->user->address || count($this->user->address) <= 10) {
             return $this->responseError('You are connected address '.$this->user->address, 200);
         }
 
