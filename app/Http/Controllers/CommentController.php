@@ -73,6 +73,12 @@ class CommentController extends Controller
         $rand = rand(1000, 9999);
         $user_id = $this->user->id;
         $body = $request->body;
+        $blacklist = explode("|", env('BLACK_LIST'));
+        $banned = $this->striposa($body, $blacklist);
+        if($banned !== false){
+            return return $this->responseError('Bad word');
+        }
+
         $data = [
         'body' => $body ?? 'Comment',
         'user_id' => $user_id ?? 1,
@@ -135,5 +141,15 @@ class CommentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function striposarray($haystack, $needles=array(), $offset=0) {
+        $chr = array();
+        foreach($needles as $needle) {
+                $res = stripos($haystack, $needle, $offset);
+                if ($res !== false) $chr[$needle] = $res;
+        }
+        if(empty($chr)) return false;
+        return min($chr);
     }
 }
