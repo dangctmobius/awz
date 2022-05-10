@@ -74,7 +74,7 @@ class CommentController extends Controller
         $user_id = $this->user->id;
         $body = $request->body;
         $blacklist = explode("|", env('BLACK_LIST'));
-        $banned = $this->striposa($body, $blacklist);
+        $banned = $this->striposarray($body, $blacklist);
         if($banned !== false){
             return $this->responseError('Bad word');
         }
