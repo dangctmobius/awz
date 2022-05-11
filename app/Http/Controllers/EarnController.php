@@ -114,17 +114,25 @@ class EarnController extends Controller
         } else {
             $subjects = [];
         }
+
+        $subjects = ['tasks', 'spin', 'ads', 'ref', 'receive_donate'];
         $data = [];
         
-        $visitorTraffic = Earn::where('created_at', '>=', Carbon::now()->subMonth())->whereStatus(2)->where('user_id', $this->user->id)->groupBy('date')->orderBy('date', 'DESC')->limit(7)->get(array(
+        $rewards = Earn::where('created_at', '>=', Carbon::now()->subMonth())->whereIn('subject', $subjects)->whereStatus(2)->where('user_id', $this->user->id)->groupBy('date')->orderBy('date', 'DESC')->limit(7)->get(array(
             \DB::raw('Date(created_at) as date'),
-            \DB::raw('COUNT(*) as "reward"'),
+            \DB::raw('SUM(reward) as "reward"'),
         ));
+
+        // foreach($rewards as &$reward) {
+        //     if((double)$reward < 0) {
+
+        //     }
+        // }
 
         
         $data['page'] = $page;
         $data['limit'] = $limit;
-        $data['items'] = $visitorTraffic;
+        $data['items'] = $rewards;
         return $this->responseOK($data);
     }
 
