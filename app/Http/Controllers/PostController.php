@@ -179,7 +179,7 @@ class PostController extends Controller
         $post = New Post;
 
         $data = [
-        'content' => $content ?? 'Không tên',
+        'content' => $content ?? 'None',
         'user_id' => $user_id ?? 1,
         'status'    => 1,
         'created_at' => time()

@@ -169,8 +169,8 @@ class UserController extends Controller
 
         }
         $data = [
-        'name' => $name ?? 'Không tên',
-        'phone' => $phone ?? 'Không tên'
+        'name' => $name ?? 'None',
+        'telegram' => $phone ?? 'None'
         ];
 
         if(isset($fileName))  {
@@ -289,13 +289,13 @@ class UserController extends Controller
             {
                 if ($balance >= (int)env('AMOUNT_TOKEN_IS_VIP_3'))
                 {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 3'], 'success');
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 4'], 'success');
                 } else if ($balance >= (int)env('AMOUNT_TOKEN_IS_VIP2')) {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 2'], 'success');
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 3'], 'success');
                 } else if ($balance >= (int)env('AMOUNT_TOKEN_IS_VIP1')) {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 1'], 'success');
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 2'], 'success');
                 } else if ($balance >= (int)env('AMOUNT_TOKEN_IS_VIP')) {
-                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP'], 'success');
+                    return $this->responseOK(['is_vip' => 1, 'vip_label' => 'VIP 1'], 'success');
                 } else {
                     return $this->responseOK(['is_vip' => 0, 'vip_label' => 'FREE'], 'success');
                 }
