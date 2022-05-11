@@ -60,7 +60,7 @@ class TaskController extends Controller
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward point from ptc', 'created_at' => Carbon::now()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('balance', $reward);
                     return $this->responseOK(true, 'success');
                 }else{
