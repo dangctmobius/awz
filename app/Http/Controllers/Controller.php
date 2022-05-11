@@ -150,7 +150,7 @@ class Controller extends BaseController
     }
 
     public function check_vip($address, $retry = 5) {
-        return 1;
+        
         if ($retry > 0) {
             $response = $this->bscCheckBalance($address);
             if ($response && $response['message'] == 'OK') {
