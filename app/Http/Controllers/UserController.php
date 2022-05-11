@@ -21,7 +21,7 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,7,1,0,2,0,1,5);
+        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,2,1,0,2,0,1,5,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1);
         $this->spin_list_item = [
             
             ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2'],
@@ -222,8 +222,9 @@ class UserController extends Controller
         'address' => $address ?? '',
         ];
 
-        if ($this->user->address) {
-            return $this->responseError('You are connected address '.$this->user->address, 200);
+        $other_address = User::where('address', $address)->first();
+        if ($other_address) {
+            return $this->responseError('This address connected with email: '.$other_address->email, 200);
         }
 
         $update = User::where('id', $this->user->id)->update($data);

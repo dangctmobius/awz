@@ -140,6 +140,7 @@ Route::group([
     Route::get('/list_today', [EarnController::class, 'list_today'])->middleware(['check_token','auth:api']);
     Route::get('/earn', [EarnController::class, 'earn'])->middleware(['check_token','auth:api']);
     Route::get('/earn_total', [EarnController::class, 'earn_total'])->middleware(['check_token','auth:api']);
+    Route::get('/list_chart', [EarnController::class, 'list_chart'])->middleware(['check_token','auth:api']);
 });
 
 
