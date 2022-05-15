@@ -21,13 +21,17 @@ Route::get('login', function () {
     return response()->json(['error'=> 'Not Authencation']);
 })->name('login');
 
-Route::get('/verify/{email}', [VerifyEmailCodeController::class, 'verify']);
+// Route::get('/verify/{email}', [VerifyEmailCodeController::class, 'verify']);
 
-Route::get('/demo', function(){
-    return view(('mail_send'));
-});
+// Route::get('/demo', function(){
+//     return view(('mail_send'));
+// });
 
 
 Route::get('/reset_task', function(){
     \DB::table('user_ptc_task')->truncate();
+});
+
+Route::get('/reset_token', function(){
+    \DB::table('token_requests')->truncate();
 });
