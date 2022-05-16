@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Earn;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class EarnController extends Controller
@@ -12,10 +13,13 @@ class EarnController extends Controller
 
 
     private $user;
+    private $input_dice;
+
     public function __construct()
     {   
         $this->middleware(['check_token']);
         $this->user = auth()->user();
+        $this->input_dice = [1,2,3,4,5,6];
     }
     /**
      * Display a listing of the resource.
@@ -43,7 +47,9 @@ class EarnController extends Controller
             $subjects = ['donate'];
         } else if ($subject == 6) {
             $subjects = ['ref'];
-        } else {
+        } else if ($subject == 7) {
+            $subjects = ['earn_dice', 'bet_dice'];
+        }else {
             $subjects = [];
         }
         $data = [];
@@ -178,14 +184,38 @@ class EarnController extends Controller
         
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function earn_dice(Request $request) 
     {
-        //
+
+        $user_id = $this->user->id;
+        $address = $this->user->address;
+        $code_dice = $request->code_dice;
+        $time_dice = $request->time_dice;
+        // if($address && $this->check_vip($address))
+        // {   
+            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'earn_dice')->whereDate('created_at', Carbon::today())->count();
+            if($total_earn < (int)env('LIMIT_REWARD_DICE')) {
+                    $reward = 1;
+                    foreach($this->input_dice as $item) {
+                        if(md5($item.env('SECURITY_CODE').$time_dice) == $code_dice) {
+                            $reward = $item;
+                            break;
+                        }
+                    }
+                    
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => (-(int)env('AMOUNT_BET_DICE')), 'subject' => 'bet_dice', 'description' => 'Bet dice', 'created_at' => Carbon::now()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'earn_dice', 'description' => 'Reward from dice', 'created_at' => Carbon::now()]);
+                    
+
+                    User::where('id', $user_id)->decrement('balance',  (int)env('AMOUNT_BET_DICE'));
+                    User::where('id', $user_id)->increment('balance',  $reward);
+                    return $this->responseOK(1, 'success');
+            } else {
+                return $this->responseError('You dice max daily.', 200);
+            }
+        // } else {
+        //     return $this->responseError('You\'re not a VIP member.', 200);
+        // }
     }
 
     /**

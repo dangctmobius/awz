@@ -38,7 +38,8 @@ class SystemController extends Controller
             'page_ref_text' => 'Send a referral link to your friend\nIf the people you refer go shopping - You will get up to 20% Cashback commission  in  that order\nMax 5 users / day',
             'page_ref_how_it_work' => 'A referral program is a system that incentivizes previous customers to recommend your products to their family and friends. Retail stores create their own referral programs as a way to reach more people. It\'s a marketing strategy that asks previous happy, loyal customers to become brand advocates',
             'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').', which will decrease after each spin.',
-            'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads'
+            'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
+            'amount_bet_dice' => env('AMOUNT_BET_DICE'),
         ];
 
         return $this->responseOK($data, 'success');
