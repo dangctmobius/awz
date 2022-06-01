@@ -14,7 +14,6 @@ class OfferController extends Controller
         $fp = fopen('request.log', 'a');
         fwrite($fp, $req_dump);
         fclose($fp);
-
         return $this->responseOk($request->all());
 
     }
