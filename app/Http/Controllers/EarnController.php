@@ -54,7 +54,7 @@ class EarnController extends Controller
         }
         $data = [];
         $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $products = Earn::where('user_id', $user_id)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;
@@ -86,8 +86,8 @@ class EarnController extends Controller
         }
         $data = [];
         $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref',])->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
-        $total_earn_today = Earn::where('user_id', $user_id)->where('status', 2)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref'])->whereDate('created_at', '=', Carbon::today())->sum('reward');
+        $products = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref', 'earn_dice'])->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $total_earn_today = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref'])->whereDate('created_at', '=', Carbon::today())->sum('reward');
         foreach($products as &$product) {
             $product['total_earn'] = $total_earn_today;
         }
@@ -124,7 +124,7 @@ class EarnController extends Controller
         $subjects = ['tasks', 'spin', 'ads', 'ref', 'receive_donate'];
         $data = [];
         
-        $rewards = Earn::where('created_at', '>=', Carbon::now()->subMonth())->whereIn('subject', $subjects)->whereStatus(2)->where('user_id', $this->user->id)->groupBy('date')->orderBy('date', 'DESC')->limit(7)->get(array(
+        $rewards = Earn::where('created_at', '>=', Carbon::now()->subMonth())->whereIn('subject', $subjects)->where('user_id', $this->user->id)->groupBy('date')->orderBy('date', 'DESC')->limit(7)->get(array(
             \DB::raw('Date(created_at) as date'),
             \DB::raw('SUM(reward) as "reward"'),
         ));
@@ -168,7 +168,7 @@ class EarnController extends Controller
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => time()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => time()]);
                     User::where('id', $user_id)->increment('balance', $reward);
                     return $this->responseOK(null, 'success');
                 }else{
@@ -193,26 +193,31 @@ class EarnController extends Controller
         $time_dice = $request->time_dice;
         // if($address && $this->check_vip($address))
         // {   
-            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'earn_dice')->whereDate('created_at', Carbon::today())->count();
-            if($total_earn < (int)env('LIMIT_REWARD_DICE')) {
-                    $reward = 1;
-                    foreach($this->input_dice as $item) {
-                        if(md5($item.env('SECURITY_CODE').$time_dice) == $code_dice) {
-                            $reward = $item;
-                            break;
+            if((int)$this->user->balance > (int)env(env('AMOUNT_BET_DICE'))) {
+                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'earn_dice')->whereDate('created_at', Carbon::today())->count();
+                if($total_earn < (int)env('LIMIT_REWARD_DICE')) {
+                        $reward = 1;
+                        foreach($this->input_dice as $item) {
+                            if(md5($item.env('SECURITY_CODE').$time_dice) == $code_dice) {
+                                $reward = $item;
+                                break;
+                            }
                         }
-                    }
-                    
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => (-(int)env('AMOUNT_BET_DICE')), 'subject' => 'bet_dice', 'description' => 'Bet dice', 'created_at' => Carbon::now()]);
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'earn_dice', 'description' => 'Reward from dice', 'created_at' => Carbon::now()]);
-                    
 
-                    User::where('id', $user_id)->decrement('balance',  (int)env('AMOUNT_BET_DICE'));
-                    User::where('id', $user_id)->increment('balance',  $reward);
-                    return $this->responseOK(1, 'success');
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => (-(int)env('AMOUNT_BET_DICE')), 'subject' => 'bet_dice', 'description' => 'Bet dice', 'created_at' => Carbon::now()]);
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'earn_dice', 'description' => 'Reward from dice', 'created_at' => Carbon::now()]);
+                        
+
+                        User::where('id', $user_id)->decrement('balance',  (int)env('AMOUNT_BET_DICE'));
+                        User::where('id', $user_id)->increment('balance',  $reward);
+                        return $this->responseOK(1, 'success');
+                } else {
+                    return $this->responseError('You dice max daily.', 200);
+                }
             } else {
-                return $this->responseError('You dice max daily.', 200);
+                return $this->responseError('You don\'t have enough money, need at least '.env('AMOUNT_BET_DICE').' AZW', 200); 
             }
+            
         // } else {
         //     return $this->responseError('You\'re not a VIP member.', 200);
         // }
@@ -272,5 +277,11 @@ class EarnController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function offer_tapjoy(Request $request){
+
+        return $this->reponseOk($request->all());
+
     }
 }

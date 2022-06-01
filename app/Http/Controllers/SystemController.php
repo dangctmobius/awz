@@ -39,7 +39,40 @@ class SystemController extends Controller
             'page_ref_how_it_work' => 'A referral program is a system that incentivizes previous customers to recommend your products to their family and friends. Retail stores create their own referral programs as a way to reach more people. It\'s a marketing strategy that asks previous happy, loyal customers to become brand advocates',
             'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').', which will decrease after each spin.',
             'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
+            'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a metamask wallet, create and add AZW tokens to your account',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
+            'earn_status' => [
+                [   
+                    'value' => 1,
+                    'label' => 'Processing',
+                    'color' => '#ffe58f'
+                ],
+                [   
+                    'value' => 2,
+                    'label' => 'Available',
+                    'color' => '#52c41a'
+                ],
+                [   
+                    'value' => 3,
+                    'label' => 'Cancel',
+                    'color' => '#ffe58f'
+                ],
+                [   
+                    'value' => 4,
+                    'label' => 'Withdrawn',
+                    'color' => '#ffe58f'
+                ],
+                [   
+                    'value' => 5,
+                    'label' => 'Withdrawing',
+                    'color' => '#ffe58f'
+                ],
+                [   
+                    'value' => 6,
+                    'label' => 'Freeze',
+                    'color' => '#ffe58f'
+                ],
+            ]
         ];
 
         return $this->responseOK($data, 'success');

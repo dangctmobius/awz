@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EarnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,6 @@ Route::get('/reset_task', function(){
 Route::get('/reset_token', function(){
     \DB::table('token_requests')->truncate();
 });
+
+
+Route::get('/payments/offers/tapjoy', [EarnController::class, 'offer_tapjoy']);
