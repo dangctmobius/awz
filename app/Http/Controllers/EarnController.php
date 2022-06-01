@@ -278,10 +278,4 @@ class EarnController extends Controller
     {
         //
     }
-
-    public function offer_tapjoy(Request $request){
-
-        return $this->reponseOk($request->all());
-
-    }
 }
