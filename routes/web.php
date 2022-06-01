@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EarnController;
+use App\Http\Controllers\OfferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +38,4 @@ Route::get('/reset_token', function(){
 });
 
 
-Route::get('/payments/offers/tapjoy', [EarnController::class, 'offer_tapjoy']);
+Route::get('/payments/offers/tapjoy', [OfferController::class, 'offer_tapjoy']);
