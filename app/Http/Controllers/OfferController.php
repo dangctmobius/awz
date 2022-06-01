@@ -10,7 +10,7 @@ class OfferController extends Controller
 
     public function offer_tapjoy(Request $request){
 
-        return $this->reponseOk($request->all());
+        return $this->responseOk($request->all());
 
     }
 }
