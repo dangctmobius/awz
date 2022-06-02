@@ -41,6 +41,7 @@ class SystemController extends Controller
             'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
             'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a metamask wallet, create and add AZW tokens to your account',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
+            'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ\nThe conversion rate of the offers: \n'.env('AMOUNT_CONVERSATION_AZW').' AZW = '.env('AMOUNT_CONVERSATION_OFFER').' points.',
             'earn_status' => [
                 [   
                     'value' => 1,
@@ -72,7 +73,8 @@ class SystemController extends Controller
                     'label' => 'Freeze',
                     'color' => '#ffe58f'
                 ],
-            ]
+            ],
+            
         ];
 
         return $this->responseOK($data, 'success');
