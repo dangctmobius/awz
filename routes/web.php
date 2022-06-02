@@ -31,10 +31,14 @@ Route::get('login', function () {
 
 Route::get('testnet', function () {
     $users = User::select('address', 'balance')->whereNotNull('address')->where('address', '<>', '')->orderBy('balance', 'desc')->get();
-    echo 'Wallet,Point<br>';
+    $html =  '<table class="table mb-0"><thead class="thead-light"><tr><th>Wallet</th><th>Point</th></tr></thead><tbody id="#Data">';
     foreach($users as $user) {
-        echo $user->address. ',' . $user->balance . '<br>';
+      
+        $html .= '<tr><th>'. $user->address .'</th> <th>'. $user->balance .'</th> </tr>';
     }
+
+    $html .= '</table>';
+    echo $html;
 })->name('testnet');
 
 
