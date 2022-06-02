@@ -78,11 +78,11 @@ Route::group([
     Route::get('/get_balance', [UserController::class, 'get_balance'])->middleware(['check_token','auth:api']);
     Route::post('/disconnect', [UserController::class, 'disconnect'])->middleware(['check_token','auth:api']);
     Route::get('/check_vip', [UserController::class, 'controller_check_vip'])->middleware(['check_token','auth:api']);
-    Route::get('/total_spin', [UserController::class, 'total_spin'])->middleware(['check_token','auth:api']);
-    Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
-    Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
-    Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
-    Route::get('/spin_pool', [UserController::class, 'spin_pool'])->middleware(['check_token','auth:api']);
+    // Route::get('/total_spin', [UserController::class, 'total_spin'])->middleware(['check_token','auth:api']);
+    // Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
+    // Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
+    // Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
+    // Route::get('/spin_pool', [UserController::class, 'spin_pool'])->middleware(['check_token','auth:api']);
 
 
     Route::get('/follow/{id}', [UserController::class, 'follow'])->middleware(['check_token','auth:api']);
