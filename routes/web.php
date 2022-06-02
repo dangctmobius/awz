@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OfferController;
-
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,6 +29,14 @@ Route::get('login', function () {
 // });
 
 
+Route::get('testnet', function () {
+    $users = User::select('email', 'address', 'balance')->orderBy('balance', 'desc')->get();
+    foreach($users as $user) {
+        echo $user->email . ',' . $user->address . ',' . $user->balance . '<br>';
+    }
+})->name('testnet');
+
+
 Route::get('/reset_task', function(){
     \DB::table('user_ptc_task')->truncate();
 });
@@ -39,3 +47,4 @@ Route::get('/reset_token', function(){
 
 
 Route::get('/payments/offers/tapjoy', [OfferController::class, 'offer_tapjoy']);
+
