@@ -30,10 +30,10 @@ Route::get('login', function () {
 
 
 Route::get('testnet', function () {
-    $users = User::select('email', 'address', 'balance')->orderBy('balance', 'desc')->get();
-    echo 'email,address,balance<br>';
+    $users = User::select('address', 'balance')->whereNotNull('address')->where('address', '<>', '')->orderBy('balance', 'desc')->get();
+    echo 'Wallet,Point<br>';
     foreach($users as $user) {
-        echo $user->email . ',' . ($user->address ?? 'ADDRESS_NULL')    . ',' . $user->balance . '<br>';
+        echo $user->address. ',' . $user->balance . '<br>';
     }
 })->name('testnet');
 
