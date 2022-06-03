@@ -439,7 +439,8 @@ class UserController extends Controller
 
                         $price = $this->getPrice();
                         $reward =  $this->spin_list_item[$reward]['value'] / $price;
-                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
+
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => intval($reward), 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
                         User::where('id', $user_id)->increment('balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
