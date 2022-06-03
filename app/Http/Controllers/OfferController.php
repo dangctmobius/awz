@@ -25,7 +25,7 @@ class OfferController extends Controller
 
         if($request->id) {
             $price = $this->getPrice();
-            $reward = (0.01) * $request->currency;
+            $reward = (0.005) * $request->currency;
             $reward = $reward / $price;
             $offer = new Offer();
             $offer->provider = 'tapjoy';
@@ -34,7 +34,9 @@ class OfferController extends Controller
             $offer->user_id = $request->snuid;
             $offer->verifier = $request->verifier;
             $offer->save();
+            
 
+            $user = User::where('id', $user_id)->first();
             if ($offer) {
                 $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'earn_offer', 'description' => 'Reward from offer: '.$request->id, 'created_at' => Carbon::now()]);
                 User::where('id', $user_id)->increment('pending_balance',  $reward);
