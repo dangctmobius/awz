@@ -54,6 +54,7 @@ class AdsController extends Controller
                     $reward = (int)env('POINT_REWARD_ADS');
                     $price = $this->getPrice();
                     $reward =  (double)env('POINT_REWARD_ADS') / $price;
+                    $reward = intval($reward);
                     if(true){
                         $history = Earn::insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => Carbon::now()]);
                         User::where('id', $user_id)->increment('pending_balance', $reward);
