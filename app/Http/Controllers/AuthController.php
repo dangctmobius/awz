@@ -159,6 +159,9 @@ class AuthController extends Controller
             {
 
                 $user = User::where('email', $email)->first();
+                if ($user->is_ban) {
+                    return $this->responseError('Your account banned!', 201);
+                }
                 if ($user) {
                     User::where('email', $email)->update(
                         ['password' => bcrypt($request->pass)]
