@@ -31,8 +31,8 @@ class SystemController extends Controller
     {   
         $data = [
             'version' => env('APP_VERSION'),
-            // 'home_banner' => 'https://cdn.azworld.network/icon.gif',
-            'home_banner' => 'https://cdn.azworld.network/close_testnet.jpg',
+            'home_banner' => 'https://cdn.azworld.network/icon.gif',
+            // 'home_banner' => 'https://cdn.azworld.network/close_testnet.jpg',
             'member_banner' => 'https://1014081465-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F6SJlk6stT2h3qjzcShZJ%2Fuploads%2F3EDIVnicUoA5AZWkRVFa%2Fmember.jpg?alt=media&token=20300823-a7a6-4e64-85b4-365d1147959e',
             'symbol' => '$AZW',
             'min_vip' => env('AMOUNT_TOKEN_IS_VIP') . '+',
