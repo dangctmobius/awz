@@ -111,8 +111,11 @@ class AuthController extends Controller
                                     $price = $this->getPrice();
                                     $reward =  (double)env('POINT_REWARD_REF') / $price;
 
-                                    \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 1, 'reward' => $reward, 'subject' => 'ref', 'description' => 'Reward from referral', 'created_at' => Carbon::now()]);
-                                    User::where('id', $check_code->id)->increment('pending_balance',  1);
+                                    $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ref')->whereDate('created_at', Carbon::today())->count();
+                                    if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
+                                        \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 1, 'reward' => $reward, 'subject' => 'ref', 'description' => 'Reward from referral', 'created_at' => Carbon::now()]);
+                                        User::where('id', $check_code->id)->increment('pending_balance',  1);
+                                    }
                                 }
                                 //  else {
                                 //     return $this->responseError('Invalid referral code', 201);
