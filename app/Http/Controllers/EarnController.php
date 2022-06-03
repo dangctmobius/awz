@@ -161,9 +161,9 @@ class EarnController extends Controller
     {
         $task_id = $request->task_id;
         $user_id = $this->user->id;
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if(!$this->user->address)
         {   
             $total_earn = \DB::table('earns')->where('user_id', $user_id)->whereDate('created_at', '>=', \Carbon::today())->count();

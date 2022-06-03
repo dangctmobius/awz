@@ -376,9 +376,9 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         $balance = $this->check_vip($address);
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if( $balance >= (int)env('AMOUNT_TOKEN_IS_VIP1'))
         {   
             $rand_keys = array_rand($this->input, 1);
@@ -413,9 +413,9 @@ class UserController extends Controller
         $address = $this->user->address;
         $spin_code = $request->spin_code;
         $balance = $this->check_vip($address);
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if($address && $balance)
         {   
 

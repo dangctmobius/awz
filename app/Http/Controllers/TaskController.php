@@ -51,9 +51,9 @@ class TaskController extends Controller
 
         $address = $this->user->address;
         $allow = false;
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if(($address &&  $this->check_vip($address)))
         {   
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();

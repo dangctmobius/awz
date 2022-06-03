@@ -41,9 +41,9 @@ class AdsController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         // dd($address);
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if($address)
         {   
             $balance = $this->check_vip($address);
@@ -81,9 +81,9 @@ class AdsController extends Controller
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         $address = $this->user->address;
-        if(!$this->user->is_vip){
-            return $this->responseError('You are not in Mainnet List', 200);
-        }
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
         if($address && $this->check_vip($address))
         {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
