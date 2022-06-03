@@ -149,6 +149,15 @@ class Controller extends BaseController
         return $response->json();
     }
 
+    public function getPrice(){
+        
+        $response = Http::get('https://api.pancakeswap.info/api/v2/tokens/'.env('CONTRACT'),);
+        $price =  $response->json();
+        $price = $price['data']['price'];
+        $decimal =  10 ** (int)env('CONTRACT_DEC');
+        return (double)$price;
+
+    }
     public function check_vip($address, $retry = 5) {
         
         if ($retry > 0) {
@@ -163,8 +172,9 @@ class Controller extends BaseController
                     return 0;
                 }
             } else if($response['status'] == 'NOTOK'){
-                $retry--;
                 $this->check_vip($address);
+                sleep(1);
+                $retry--;
             } else {
                 return 0;
             }

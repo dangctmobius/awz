@@ -40,9 +40,10 @@ class SystemController extends Controller
             'page_ref_how_it_work' => 'A referral program is a system that incentivizes previous customers to recommend your products to their family and friends. Retail stores create their own referral programs as a way to reach more people. It\'s a marketing strategy that asks previous happy, loyal customers to become brand advocates',
             'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').', which will decrease after each spin.',
             'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
-            'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a metamask wallet, create and add AZW tokens to your account',
+            'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a wallet, create and add AZW tokens to your account. \nConversation: 1 AZW offchain = 10 AZW onchain',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
             'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ\nThe conversion rate of the offers: \n'.env('AMOUNT_CONVERSATION_AZW').' AZW = '.env('AMOUNT_CONVERSATION_OFFER').' points.',
+            'min_withdraw' => (int)env('MIN_WITHDRAW') ?? 1000,
             'earn_status' => [
                 [   
                     'value' => 1,

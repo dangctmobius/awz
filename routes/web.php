@@ -31,7 +31,7 @@ Route::get('login', function () {
 
 Route::get('testnet', function () {
     $users = User::select('address', 'balance')->whereNotNull('address')->where('address', '<>', '')->orderBy('balance', 'desc')->get();
-    $html =  '<table class="table mb-0"><thead class="thead-light"><tr><th>Wallet</th><th>Point</th></tr></thead><tbody id="#Data">';
+    $html =  '<table class="table mb-0"><thead class="thead-light"><tr><th>Wallet</th><th>Pointoi</th></tr></thead><tbody id="#Data">';
     foreach($users as $user) {
       
         $html .= '<tr><th>'. $user->address .'</th> <th>'. $user->balance .'</th> </tr>';

@@ -21,17 +21,17 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = array(1,1,1,0,0,1,2,2,1,0,0,2,1,1,4,2,1,2,1,2,3,1,6,4,1,3,2,1,3,3,7,1,1,3,2,1,1,1,1,0,2,1,0,2,0,1,5,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1);
+        $this->input = [1,1,1,0,0,1,2,2,1,0,0,2,1,1,1,2,1,2,1,2,3,1,1,1,1,3,2,1,2,0,4,1,1,0,2,1,1,3,1,0,2,1,0,2,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1];
         $this->spin_list_item = [
             
-            ['color' => '#29a8ab', 'value' => 2, 'label' =>  '2'],
-            ['color' => '#fed766', 'value' => 5, 'label' => '5'],
-            ['color' => '#011f4b', 'value' => 10, 'label' =>  '10'],
-            ['color' => '#03396c', 'value' => 15, 'label' =>  '15'],
+            ['color' => '#29a8ab', 'value' => 1, 'label' =>  '1'],
+            ['color' => '#fed766', 'value' => 2, 'label' => '2'],
+            ['color' => '#011f4b', 'value' => 5, 'label' =>  '5'],
+            ['color' => '#03396c', 'value' => 10, 'label' =>  '10'],
             ['color' => '#851e3e', 'value' => 20, 'label' =>  '20'],
-            ['color' => '#009688', 'value' => 25, 'label' =>  '25'],
-            ['color' => '#3b5998', 'value' => 30, 'label' =>  '30'],
-            ['color' => '#2ab7ca', 'value' => 50, 'label' => '50']
+            ['color' => '#009688', 'value' => 30, 'label' =>  '30'],
+            ['color' => '#3b5998', 'value' => 50, 'label' =>  '50'],
+            ['color' => '#2ab7ca', 'value' => 100, 'label' => '100']
         ];
     }
 
@@ -375,15 +375,19 @@ class UserController extends Controller
 
         $user_id = $this->user->id;
         $address = $this->user->address;
-        // if($address && $this->check_vip($address))
-        // {   
+        $balance = $this->check_vip($address);
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
+        if( $balance >= (int)env('AMOUNT_TOKEN_IS_VIP1'))
+        {   
             $rand_keys = array_rand($this->input, 1);
             
             return $this->responseOK($this->input[$rand_keys], 'success');
            
-        // } else {
-        //     return $this->responseError('You\'re not a VIP member.', 200);
-        // }
+        } else {
+            return $this->responseError('You\'re not a VIP 2 member.', 200);
+        }
     }
 
     public function list_spin() 
@@ -408,31 +412,41 @@ class UserController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         $spin_code = $request->spin_code;
-        // if($address && $this->check_vip($address))
-        // {   
-            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
-            if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
-                    $reward = 1;
-                    foreach($this->input as $item) {
-                        if(md5($item.env('SECURITY_CODE')) == $spin_code) {
-                            $reward = $item;
-                            break;
+        $balance = $this->check_vip($address);
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
+        if($address && $balance)
+        {   
+
+            if( $balance >= (int)env('AMOUNT_TOKEN_IS_VIP1')) {
+
+                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
+                if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
+                        $reward = 1;
+                        foreach($this->input as $item) {
+                            if(md5($item.env('SECURITY_CODE')) == $spin_code) {
+                                $reward = $item;
+                                break;
+                            }
                         }
-                    }
-                    $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
-                    $pool = env('POOL');
-                    if((($pool - $earn) - $this->spin_list_item[$reward]['value'])  <= 0 ) {
-                        return $this->responseError('Max pool reward.', 200);
-                    }
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
-                    User::where('id', $user_id)->increment('balance',  $this->spin_list_item[$reward]['value']);
-                    return $this->responseOK(1, 'success');
+                        $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+                        $pool = env('POOL');
+                        if((($pool - $earn) - $this->spin_list_item[$reward]['value'])  <= 0 ) {
+                            return $this->responseError('Max pool reward.', 200);
+                        }
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $this->spin_list_item[$reward]['value'], 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
+                        User::where('id', $user_id)->increment('balance',  $this->spin_list_item[$reward]['value']);
+                        return $this->responseOK(1, 'success');
+                } else {
+                    return $this->responseError('You spin max daily.', 200);
+                }
             } else {
-                return $this->responseError('You spin max daily.', 200);
+                return $this->responseError('You\'re not a VIP 2 member.', 200);    
             }
-        // } else {
-        //     return $this->responseError('You\'re not a VIP member.', 200);
-        // }
+        } else {
+            return $this->responseError('You\'re not a VIP member.', 200);
+        }
     }
 
 

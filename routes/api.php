@@ -18,6 +18,7 @@ use App\Http\Controllers\AirdropController;
 use App\Http\Controllers\AirdropSubmitController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WithdrawController;
 
 
 
@@ -78,11 +79,11 @@ Route::group([
     Route::get('/get_balance', [UserController::class, 'get_balance'])->middleware(['check_token','auth:api']);
     Route::post('/disconnect', [UserController::class, 'disconnect'])->middleware(['check_token','auth:api']);
     Route::get('/check_vip', [UserController::class, 'controller_check_vip'])->middleware(['check_token','auth:api']);
-    // Route::get('/total_spin', [UserController::class, 'total_spin'])->middleware(['check_token','auth:api']);
-    // Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
-    // Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
-    // Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
-    // Route::get('/spin_pool', [UserController::class, 'spin_pool'])->middleware(['check_token','auth:api']);
+    Route::get('/total_spin', [UserController::class, 'total_spin'])->middleware(['check_token','auth:api']);
+    Route::get('/spin', [UserController::class, 'spin'])->middleware(['check_token','auth:api']);
+    Route::get('/list_spin', [UserController::class, 'list_spin'])->middleware(['check_token','auth:api']);
+    Route::post('/earn_spin', [UserController::class, 'earn_spin'])->middleware(['check_token','auth:api']);
+    Route::get('/spin_pool', [UserController::class, 'spin_pool'])->middleware(['check_token','auth:api']);
 
 
     Route::get('/follow/{id}', [UserController::class, 'follow'])->middleware(['check_token','auth:api']);
@@ -134,39 +135,39 @@ Route::group([
 
 
 
-// // Route::group([
-// //     'middleware' => 'api',
-// //     'prefix' => 'earn'
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'earn'
 
-// // ], function ($router) {
-// //     Route::get('/list', [EarnController::class, 'list'])->middleware(['check_token','auth:api']);
-// //     Route::get('/list_today', [EarnController::class, 'list_today'])->middleware(['check_token','auth:api']);
-// //     Route::get('/earn', [EarnController::class, 'earn'])->middleware(['check_token','auth:api']);
-// //     Route::get('/earn_total', [EarnController::class, 'earn_total'])->middleware(['check_token','auth:api']);
-// //     Route::get('/list_chart', [EarnController::class, 'list_chart'])->middleware(['check_token','auth:api']);
-// //     Route::post('/earn_dice', [EarnController::class, 'earn_dice'])->middleware(['check_token','auth:api']);
-// // });
-
-
-// Route::group([
-//     'middleware' => 'api',
-//     'prefix' => 'task'
-
-// ], function ($router) {
-//     Route::get('/list', [TaskController::class, 'list'])->middleware(['check_token','auth:api']);
-//     Route::post('/earn', [TaskController::class, 'earn'])->middleware(['check_token','auth:api']);
-// });
+], function ($router) {
+    Route::get('/list', [EarnController::class, 'list'])->middleware(['check_token','auth:api']);
+    Route::get('/list_today', [EarnController::class, 'list_today'])->middleware(['check_token','auth:api']);
+    Route::get('/earn', [EarnController::class, 'earn'])->middleware(['check_token','auth:api']);
+    Route::get('/earn_total', [EarnController::class, 'earn_total'])->middleware(['check_token','auth:api']);
+    Route::get('/list_chart', [EarnController::class, 'list_chart'])->middleware(['check_token','auth:api']);
+    Route::post('/earn_dice', [EarnController::class, 'earn_dice'])->middleware(['check_token','auth:api']);
+});
 
 
-// Route::group([
-//     'middleware' => 'api',
-//     'prefix' => 'ads'
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'task'
 
-// ], function ($router) {
-//     Route::get('/limit', [AdsController::class, 'limit'])->middleware(['check_token','auth:api']);
-//     Route::post('/earn', [AdsController::class, 'earn'])->middleware(['check_token','auth:api']);
-//     Route::get('/check_show_ads', [AdsController::class, 'check_show_ads'])->middleware(['check_token','auth:api']);
-// });
+], function ($router) {
+    Route::get('/list', [TaskController::class, 'list'])->middleware(['check_token','auth:api']);
+    Route::post('/earn', [TaskController::class, 'earn'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'ads'
+
+], function ($router) {
+    Route::get('/limit', [AdsController::class, 'limit'])->middleware(['check_token','auth:api']);
+    Route::post('/earn', [AdsController::class, 'earn'])->middleware(['check_token','auth:api']);
+    Route::get('/check_show_ads', [AdsController::class, 'check_show_ads'])->middleware(['check_token','auth:api']);
+});
 
 
 
@@ -223,4 +224,14 @@ Route::group([
 
 ], function ($router) {
     Route::get('/list', [OrderController::class, 'index'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'withdraw'
+
+], function ($router) {
+    Route::post('/withdraw', [WithdrawController::class, 'withdraw'])->middleware(['check_token','auth:api']);
+    Route::get('/list', [WithdrawController::class, 'list'])->middleware(['check_token','auth:api']);
 });

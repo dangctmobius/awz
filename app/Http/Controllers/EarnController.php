@@ -49,6 +49,8 @@ class EarnController extends Controller
             $subjects = ['ref'];
         } else if ($subject == 7) {
             $subjects = ['earn_dice', 'bet_dice'];
+        } else if ($subject == 8) {
+            $subjects = ['earn_offer'];
         }else {
             $subjects = [];
         }
@@ -86,8 +88,8 @@ class EarnController extends Controller
         }
         $data = [];
         $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref', 'earn_dice'])->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
-        $total_earn_today = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref'])->whereDate('created_at', '=', Carbon::today())->sum('reward');
+        $products = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref', 'earn_dice','earn_offer'])->whereDate('created_at', '=', Carbon::today())->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $total_earn_today = Earn::where('user_id', $user_id)->whereIn('subject', ['tasks', 'spin', 'ads', 'ref', 'earn_offer'])->whereDate('created_at', '=', Carbon::today())->sum('reward');
         foreach($products as &$product) {
             $product['total_earn'] = $total_earn_today;
         }
@@ -159,7 +161,9 @@ class EarnController extends Controller
     {
         $task_id = $request->task_id;
         $user_id = $this->user->id;
-
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
         if(!$this->user->address)
         {   
             $total_earn = \DB::table('earns')->where('user_id', $user_id)->whereDate('created_at', '>=', \Carbon::today())->count();
@@ -167,9 +171,11 @@ class EarnController extends Controller
                 $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => time()]);
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
+                $price = $this->getPrice();
+                $reward =  (double)env('POINT_REWARD_TASK') / $price;
                 if($earn){
                     $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => time()]);
-                    User::where('id', $user_id)->increment('balance', $reward);
+                    User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(null, 'success');
                 }else{
                     return $this->responseError();
@@ -208,8 +214,8 @@ class EarnController extends Controller
                         $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'earn_dice', 'description' => 'Reward from dice', 'created_at' => Carbon::now()]);
                         
 
-                        User::where('id', $user_id)->decrement('balance',  (int)env('AMOUNT_BET_DICE'));
-                        User::where('id', $user_id)->increment('balance',  $reward);
+                        User::where('id', $user_id)->decrement('pending_balance',  (int)env('AMOUNT_BET_DICE'));
+                        User::where('id', $user_id)->increment('pending_balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
                     return $this->responseError('You dice max daily.', 200);

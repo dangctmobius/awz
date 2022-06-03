@@ -23,11 +23,15 @@ class CashbackController extends Controller
             return $this->responseOK($data, 'success');
         } else if($type == 'global_slider_2') {
 
-           $data['items']= [
-                ['image_url' => 'https://media-img-proxy.shopback.sg/OzbxUoodK88/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvMTJjMTJjZGUtMzYzMy00NzU2LWI1YzgtNjNhZmY3MzI3MGM1LUhlcm8gTW9iaWxlX1NDQiBTdXBlciBTdW5kYXkgKDEpLnBuZw.png', 'tracking_url' => 'https://app.azworl.network'],
-                ['image_url' => 'https://media-img-proxy.shopback.sg/D-liRJ0eYvE/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvZjU1MTljODQtNGYwMy00NzFhLWFhN2EtNjAyZDg3YjVjYjM4LUhlcm8gTW9iaWxlIC0gTkVXIFRUICgxKS5wbmc.png', 'tracking_url' => 'https://app.azworl.network'],
-                ['image_url' => 'https://media-img-proxy.shopback.sg/MhNy8KFQ_og/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvNjMyYTVhOGQtNmYxOC00YzI2LWJlZTItMWZmNWUxN2VjNTc4LUhlcm8gTW9iaWxlX1NDQiBDYXJkIEFjcXVpc2l0aW9uLnBuZw.png', 'tracking_url' => 'https://app.azworl.network']
-             ];
+        //    $data['items']= [
+        //         ['image_url' => 'https://media-img-proxy.shopback.sg/OzbxUoodK88/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvMTJjMTJjZGUtMzYzMy00NzU2LWI1YzgtNjNhZmY3MzI3MGM1LUhlcm8gTW9iaWxlX1NDQiBTdXBlciBTdW5kYXkgKDEpLnBuZw.png', 'tracking_url' => 'https://app.azworl.network'],
+        //         ['image_url' => 'https://media-img-proxy.shopback.sg/D-liRJ0eYvE/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvZjU1MTljODQtNGYwMy00NzFhLWFhN2EtNjAyZDg3YjVjYjM4LUhlcm8gTW9iaWxlIC0gTkVXIFRUICgxKS5wbmc.png', 'tracking_url' => 'https://app.azworl.network'],
+        //         ['image_url' => 'https://media-img-proxy.shopback.sg/MhNy8KFQ_og/czM6Ly9tZWRpYS1zZXJ2aWNlLXNiLXByb2Qtc2cvNjMyYTVhOGQtNmYxOC00YzI2LWJlZTItMWZmNWUxN2VjNTc4LUhlcm8gTW9iaWxlX1NDQiBDYXJkIEFjcXVpc2l0aW9uLnBuZw.png', 'tracking_url' => 'https://app.azworl.network']
+        //      ];
+        
+             $slider = Slider::where('cate', $type)->get();
+            
+             $data['items'] = $slider;     
             return $this->responseOK($data, 'success');
         } else if($type == 'global_top_deal') {
 

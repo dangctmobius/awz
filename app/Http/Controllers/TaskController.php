@@ -51,6 +51,9 @@ class TaskController extends Controller
 
         $address = $this->user->address;
         $allow = false;
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
         if(($address &&  $this->check_vip($address)))
         {   
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
@@ -59,9 +62,11 @@ class TaskController extends Controller
                 $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => Carbon::now()]);
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
+                $price = $this->getPrice();
+                $reward =  (double)env('POINT_REWARD_TASK') / $price;
                 if($earn){
                     $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => Carbon::now()]);
-                    User::where('id', $user_id)->increment('balance', $reward);
+                    User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(true, 'success');
                 }else{
                     return $this->responseError();

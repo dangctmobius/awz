@@ -41,7 +41,9 @@ class AdsController extends Controller
         $user_id = $this->user->id;
         $address = $this->user->address;
         // dd($address);
-        
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
         if($address)
         {   
             $balance = $this->check_vip($address);
@@ -50,9 +52,11 @@ class AdsController extends Controller
                 $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
                 if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
                     $reward = (int)env('POINT_REWARD_ADS');
+                    $price = $this->getPrice();
+                    $reward =  (double)env('POINT_REWARD_TASK') / $price;
                     if(true){
-                        $history = Earn::insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => Carbon::now()]);
-                        User::where('id', $user_id)->increment('balance', $reward);
+                        $history = Earn::insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => Carbon::now()]);
+                        User::where('id', $user_id)->increment('pending_balance', $reward);
                         return $this->responseOK(true, 'success');
                     }else{
                         return $this->responseError();
@@ -76,6 +80,9 @@ class AdsController extends Controller
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         $address = $this->user->address;
+        if(!$this->user->is_vip){
+            return $this->responseError('You are not in Mainnet List', 200);
+        }
         if($address && $this->check_vip($address))
         {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
