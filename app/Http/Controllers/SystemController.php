@@ -38,7 +38,7 @@ class SystemController extends Controller
             'min_vip' => env('AMOUNT_TOKEN_IS_VIP') . '+',
             'page_ref_text' => 'Send a referral link to your friend\nIf the people you refer go shopping - You will get up to 20% Cashback commission  in  that order\nMax 5 users / day',
             'page_ref_how_it_work' => 'A referral program is a system that incentivizes previous customers to recommend your products to their family and friends. Retail stores create their own referral programs as a way to reach more people. It\'s a marketing strategy that asks previous happy, loyal customers to become brand advocates',
-            'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').', which will decrease after each spin.',
+            'page_wheel_text' => 'The total value of the payout pool is '.env('POOL').' USDT, which will decrease after each spin.\nWhen you spin how many USDT, we will send you the corresponding token according to the market price',
             'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
             'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a wallet, create and add AZW tokens to your account. \nConversation: 1 AZW offchain = 1 AZW onchain',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
