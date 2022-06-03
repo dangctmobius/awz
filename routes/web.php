@@ -28,6 +28,9 @@ Route::get('login', function () {
 //     return view(('mail_send'));
 // });
 
+Route::get('/tracking', function () {
+    return  redirect('https://amazon.com');;
+});
 
 Route::get('testnet', function () {
     $users = User::select('address', 'balance')->whereNotNull('address')->where('address', '<>', '')->orderBy('balance', 'desc')->get();
