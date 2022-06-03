@@ -28,7 +28,7 @@ class OfferController extends Controller
             $price = $this->getPrice();
             $reward = (double)env('REWARD_OFFER') * $request->currency;
             $reward = $reward / $price;
-            
+
             $reward = intval($reward);
 
 
@@ -40,10 +40,23 @@ class OfferController extends Controller
             $offer->verifier = $request->verifier;
             $offer->save();
             
-
+            $des = 'Reward from offer: '.$request->id;
+            if($user->address) {
+                $balance = $this->check_vip($user->address);
+                if($balance >= (int)env('AMOUNT_TOKEN_IS_VIP')){
+                    
+                } else {
+                    $reward = 10;
+                    $des = 'Reward for free member';
+                } 
+            } else {
+                $reward = 10;
+                $des = 'Reward for free member';
+            } 
+            
             
             if ($offer) {
-                $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'earn_offer', 'description' => 'Reward from offer: '.$request->id, 'created_at' => Carbon::now()]);
+                $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'earn_offer', 'description' => $des, 'created_at' => Carbon::now()]);
                 User::where('id', $user_id)->increment('pending_balance',  $reward);
             }
         }
