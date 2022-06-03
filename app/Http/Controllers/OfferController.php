@@ -25,7 +25,7 @@ class OfferController extends Controller
 
         if($request->id) {
             $price = $this->getPrice();
-            $reward = (0.001) * $request->currency;
+            $reward = (0.008) * $request->currency;
             $reward = $reward / $price;
             $offer = new Offer();
             $offer->provider = 'tapjoy';
