@@ -22,9 +22,12 @@ class OfferController extends Controller
         //     [verifier] => aff3876b856ca0ff45f4e6e7435c0924
         // )
         $user_id = $request->snuid;
-        $reward = $request->currency;
+        
 
         if($request->id) {
+            $price = $this->getPrice();
+            $reward = (0.001) * $request->currency;
+            $reward = $reward / $price;
             $offer = new Offer();
             $offer->provider = 'tapjoy';
             $offer->currency = $request->currency;
