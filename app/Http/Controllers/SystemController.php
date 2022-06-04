@@ -42,7 +42,7 @@ class SystemController extends Controller
             'home_no_data_earning_today' => 'You have not earned AZW token today, or quickly get rewarded by referring friends or using lucky wheel, earn money by reading news, watching ads',
             'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a wallet, create and add AZW tokens to your account. \nConversation: 1 AZW offchain = 1 AZW onchain.\nYou must keep AZW tokens in your wallet continuously for 7 days until the withdrawal from the app is approved. We will refuse to withdraw funds if we detect fraud.',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
-            'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ',
+            'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ. 1 Point in task = 0.1 AZW',
             'min_withdraw' => (int)env('MIN_WITHDRAW') ?? 1000,
             'earn_status' => [
                 [   
