@@ -217,15 +217,26 @@ class UserController extends Controller
 
         // $email = $request->email;
         $address = $request->address;
-        
         $data = [
-        'address' => $address ?? '',
-        ];
+            'address' => $address ?? NULL,
+            ];
 
-        $other_address = User::where('address', $address)->first();
-        if ($other_address) {
-            return $this->responseError('This address connected with email: '.$other_address->email, 200);
+        if ($this->user->metamask_address && $this->user->metamask_address == $address) {
+             
+
+        } else if($this->user->metamask_address && $this->user->metamask_address != $address) {
+
+            return $this->responseError('You connected this email with other address', 200);
+
+        } else {
+            $other_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
+            if ( $other_address) {
+                return $this->responseError('This address connected with email: '.$other_address->email, 200);
+            }
         }
+        
+
+        
 
         $update = User::where('id', $this->user->id)->update($data);
         // $user = User::where('email', $email)->first();
@@ -273,7 +284,7 @@ class UserController extends Controller
                 return $this->responseOK($data, 'success');
             }
         } else {
-            return $this->responseOK('You have not connected the metamask wallet. Please connect your address!', 200);
+            return $this->responseOK('You have not connected the wallet. Please connect your address!', 200);
         }
         
     }
@@ -312,7 +323,7 @@ class UserController extends Controller
     public function disconnect() {
 
         $id = $this->user->id;
-        $update = User::where('id', $id)->update(['address'=> NULL]);
+        $update = User::where('id', $id)->update(['address'=> NULL, 'metamask_address' => $this->user->metamask_address ? $this->user->metamask_address : $this->user->address]);
         $user = User::where('id', $id)->first();
         $data = [];
         $data['item'] = $user;
@@ -441,7 +452,7 @@ class UserController extends Controller
                         $reward =  $this->spin_list_item[$reward]['value'] / $price;
                         $reward = intval($reward);
 
-                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
                         User::where('id', $user_id)->increment('balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {

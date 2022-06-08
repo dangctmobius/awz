@@ -202,10 +202,17 @@ class AuthController extends Controller
                 $credentials = $request->only(['email']);
 
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
-
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => ($request->pass) ])) {
                     return $this->responseError('Incorrect email or password', 201);
                 }
+
+                if($request->fcm_token) {
+                    User::where('email', $email)->update(['fcm_token' => $request->fcm_token]);
+                }
+                if($request->device) {
+                    \DB::table('login_logs')->insert(['user_id' => Auth::user()->id, 'device' => $request->device ?? '1', 'created_at' => now(), 'time_login' => $request->time_login ?? 1]);
+                }
+               
 
                 return $this->respondWithToken($token, Auth::user());
 

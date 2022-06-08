@@ -88,9 +88,9 @@ class AdsController extends Controller
         {   
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
             
-            if($total_earn < MAX_VIP_CLICK_TASK)
+            if($total_earn < MAX_VIP_REWARD_ADS)
             { 
-                    return $this->responseOK(['allow_show_ads' => 1], 'success');
+                    return $this->responseOK(['allow_show_offers' => 1], 'success');
 
             } else {
                 return $this->responseError('You watched max daily.', 200);
@@ -100,4 +100,34 @@ class AdsController extends Controller
             return $this->responseError('You\'re not a VIP member.', 200);
         }
     }
+
+    public function check_show_offers(Request $request)
+    {
+        
+        $user_id = $this->user->id;
+        $address = $this->user->address;
+        // if(!$this->user->is_vip){
+        //     return $this->responseError('You are not in Mainnet List', 200);
+        // }
+        if($address && $this->check_vip($address))
+        {   
+            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
+            
+            if($total_earn < env('MAX_VIP_REWARD_ADS'))
+            { 
+                    return $this->responseOK(['allow_show_offers' => 1], 'success');
+
+            } else {
+                return $this->responseError('You watched max daily.', 200);
+            }
+           
+        } else {
+            return $this->responseError('You\'re not a VIP member.', 200);
+        }
+    }
+
+
+    
+
+
 }

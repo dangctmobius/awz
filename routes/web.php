@@ -56,3 +56,35 @@ Route::get('/reset_token', function(){
 
 Route::get('/payments/offers/tapjoy', [OfferController::class, 'offer_tapjoy']);
 
+
+
+Route::get('/send_fcm', function () {
+
+    $response = Http::withHeaders([
+        'Authorization' => env('FCM_ADMIN_TOKEN'),
+        'Content-Type' => 'application/json' 
+    ])->post('https://fcm.googleapis.com/fcm/send', [
+        'to' => '/topics/all',
+        'notification'=>[
+            "title"=> "Test title message",
+            "body"=> "Test title body",
+            "sound" => "default"
+        ],
+        "data"=>[
+            "click_action"=> "FLUTTER_NOTIFICATION_CLICK",
+            "priority"=> "high",
+            "collapse_key"=> "type_a",
+            "data"=> [
+                "click_action"=> "FLUTTER_NOTIFICATION_CLICK",
+                "other_data"=> "any message",
+                "title"=> "title",
+                "body"=> "body",
+                "priority"=> "high",
+                "click_action"=> "FLUTTER_NOTIFICATION_CLICK"
+                ]
+            ],
+    ]);
+    return $response;
+    
+});
+

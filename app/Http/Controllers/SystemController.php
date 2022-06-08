@@ -43,6 +43,9 @@ class SystemController extends Controller
             'page_withdraw' => 'You can withdraw point to AZW token. \nIf you don\'t have a wallet, create and add AZW tokens to your account. \nConversion: 1 AZW offchain = 1 AZW onchain.\nYou must keep AZW tokens in your wallet continuously for 7 days until the withdrawal from the app is approved. We will refuse to withdraw funds if we detect fraud.',
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
             'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ. 5 Point in task = 1 AZW',
+            'setting_page' => 'Note: 1 Email only connects with 1 Wallet - You can change this to antispam on system !',
+            'page_home' => '',
+            'maintenance' => env('MAINTENANCE'),
             'min_withdraw' => (int)env('MIN_WITHDRAW') ?? 1000,
             'earn_status' => [
                 [   
