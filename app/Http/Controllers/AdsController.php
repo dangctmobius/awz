@@ -90,7 +90,7 @@ class AdsController extends Controller
             
             if($total_earn < MAX_VIP_REWARD_ADS)
             { 
-                    return $this->responseOK(['allow_show_offers' => 1], 'success');
+                    return $this->responseOK(['allow_show_ads' => 1], 'success');
 
             } else {
                 return $this->responseError('You watched max daily.', 200);
