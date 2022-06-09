@@ -33,14 +33,17 @@ class WithdrawController extends Controller
             $withdraw->amount = $request->amount;
             $withdraw->status = 1;
             $withdraw->description = 'Withdraw processing';
-            $withdraw->save();
+            $withdraw->save();    
+            $user = User::where('id', $this->user->id)->first();
+            if($user->balance >= $amount) {
+                User::where('id', $this->user->id)->decrement('balance',  $amount);
+                User::where('id', $this->user->id)->increment('frozen',  $amount);
+                return $this->responseOK($withdraw, 'success');
+            } else {
+                return $this->responseError('You not enough balance');
+            }
             
             
-            User::where('id', $this->user->id)->decrement('balance',  $amount);
-            User::where('id', $this->user->id)->increment('frozen',  $amount);
-            
-
-            return $this->responseOK($withdraw, 'success');
         } else {
             return $this->responseError('You not enough balance');
         }
