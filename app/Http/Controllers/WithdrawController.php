@@ -42,8 +42,6 @@ class WithdrawController extends Controller
             } else {
                 return $this->responseError('You not enough balance');
             }
-            
-            
         } else {
             return $this->responseError('You not enough balance');
         }
