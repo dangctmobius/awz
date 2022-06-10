@@ -453,7 +453,7 @@ class UserController extends Controller
                         $reward = intval($reward);
 
                         $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
-                        User::where('id', $user_id)->increment('balance',  $reward);
+                        User::where('id', $user_id)->increment('pending_balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
                     return $this->responseError('You spin max daily.', 200);
