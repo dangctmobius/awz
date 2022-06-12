@@ -112,13 +112,13 @@ class AuthController extends Controller
                                     $reward =  (double)env('POINT_REWARD_REF') / $price;
 
                                     
-                                    if($owner_user){
+                                    
                                         $total_earn = Earn::where('user_id', $check_code->id)->where('subject', 'ref')->whereDate('created_at', Carbon::today())->count();
                                         if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
                                             \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 1, 'reward' => intval($reward), 'subject' => 'ref', 'description' => 'Reward from referral', 'created_at' => Carbon::now()]);
                                             User::where('id', $check_code->id)->increment('pending_balance',  intval($reward));
                                         }
-                                    }
+                                    
                                     
                                 }
                                  else {
