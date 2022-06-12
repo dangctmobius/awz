@@ -121,9 +121,9 @@ class AuthController extends Controller
                                     
                                     
                                 }
-                                 else {
-                                    return $this->responseError('Invalid referral code', 201);
-                                }
+                                //  else {
+                                //     return $this->responseError('Invalid referral code', 201);
+                                // }
                             }
 
                         // } else {
