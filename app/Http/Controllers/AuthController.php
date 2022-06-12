@@ -117,9 +117,9 @@ class AuthController extends Controller
                                         User::where('id', $check_code->id)->increment('pending_balance',  intval($reward));
                                     }
                                 }
-                                //  else {
-                                //     return $this->responseError('Invalid referral code', 201);
-                                // }
+                                 else {
+                                    return $this->responseError('Invalid referral code', 201);
+                                }
                             }
 
                         // } else {
