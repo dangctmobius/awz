@@ -210,6 +210,10 @@ class AuthController extends Controller
                     return $this->responseError('Incorrect email or password', 201);
                 }
 
+                if (Auth::user()->is_ban) {
+                    return $this->responseError('Your account banned!', 201);
+                }
+
                 if($request->fcm_token) {
                     User::where('email', $email)->update(['fcm_token' => $request->fcm_token]);
                 }
