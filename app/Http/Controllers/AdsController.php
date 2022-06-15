@@ -104,6 +104,7 @@ class AdsController extends Controller
     public function check_show_offers(Request $request)
     {
         
+        return $this->responseOK(['allow_show_offers' => 1], 'success');
         $user_id = $this->user->id;
         $address = $this->user->address;
         // if(!$this->user->is_vip){

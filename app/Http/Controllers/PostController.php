@@ -42,6 +42,7 @@ class PostController extends Controller
                 $q2->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.verify')->where('follower_id', $user_id);
             }]);
         }])
+        ->withSum('donates', 'amount')
        
         // ->with('user.followers')
         ->with(['likes' => function ($q) use($user_id) {

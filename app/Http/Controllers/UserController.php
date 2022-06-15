@@ -560,6 +560,7 @@ class UserController extends Controller
             $my_user = User::where('id', $user_id)->decrement('balance', $amount);
             \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => -($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
             \DB::table('earns')->insert(['user_id' => $influ_id->user_id, 'status' => 2, 'reward' => ($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
+            \DB::table('donates')->insert(['user_id' => $user_id, 'post_id' => $post_id, 'amount' => $amount]);
 
         }  else {
             return $this->responseError("You don\'t have enough balance to donate", 200);
