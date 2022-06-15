@@ -49,6 +49,7 @@ class SystemController extends Controller
             'page_member_main' => '1.  Connect your wallet\n2. Hold '.env('AMOUNT_TOKEN_IS_VIP').'AZW in wallet\n3.  Membership upgrade confirmation',
             'page_member_help' => 'Step 1: Connect your wallet\nStep 2: You must make sure you have purchased the AZW Token\nStep 3: You can visit the website azworld.network for instructions to buy Tokens\nStep 4: You agree that wallet only see balance\nStep 5: We confirm you have been promoted to membership\nStep 6: You must hold AZW to use the monetization functions',
             'page_home' => '',
+            'is_show_banner' => 1,
             'maintenance' => env('MAINTENANCE'),
             'min_withdraw' => (int)env('MIN_WITHDRAW') ?? 1000,
             'earn_status' => [
@@ -150,6 +151,7 @@ class SystemController extends Controller
                 'page_member_main' => '1. 连接你的钱包\n2. 钱包里持有 '.env('AMOUNT_TOKEN_IS_VIP').'AZW\n3. 会员升级确认',
                 'page_member_help' => '第 1 步：连接您的钱包\n第 2 步: 您必须确保您已购买 AZW 代币\n第 3 步: 您可以访问网站 azworld.network 获取购买代币的说明\n第 4 步: 您同意钱包只看到余额\n第 5 步: 我们确认您已晋升为会员\n步骤 6: 您必须持有 AZW 才能使用变现功能',
                 'page_home' => '',
+                'is_show_banner' => 1,
                 'maintenance' => env('MAINTENANCE'),
                 'min_withdraw' => (int)env('MIN_WITHDRAW') ?? 1000,
                 'earn_status' => [
