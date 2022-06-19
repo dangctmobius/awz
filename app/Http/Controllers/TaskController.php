@@ -48,12 +48,13 @@ class TaskController extends Controller
     {
         sleep(rand(1, 3));
         sleep(rand(1, 3));
-        
+
         $task_id = $request->task_id;
         $user_id = $this->user->id;
 
         $address = $this->user->address;
         $allow = false;
+        $now = Carbon::now();
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
@@ -62,14 +63,15 @@ class TaskController extends Controller
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
             if($total_earn < (int)env('MAX_VIP_CLICK_TASK')) {
                 
-                $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => Carbon::now()]);
+                $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => $now]);
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
                 $price = $this->getPrice();
                 $reward =  (double)env('POINT_REWARD_TASK') / $price;
                 $reward = intval($reward);
+                $key =  $user_id.'_'.$now;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => Carbon::now()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now]);
                     User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(true, 'success');
                 }else{
