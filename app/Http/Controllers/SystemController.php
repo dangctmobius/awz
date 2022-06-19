@@ -127,6 +127,10 @@ class SystemController extends Controller
                 ],
 
             ],
+            'product_ids' => [
+                'subscription_silver',
+                'subscription_gold',
+            ]
             
         ];
 
