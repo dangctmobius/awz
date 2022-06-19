@@ -64,10 +64,11 @@ Route::get('/send_fcm', function () {
         'Authorization' => env('FCM_ADMIN_TOKEN'),
         'Content-Type' => 'application/json' 
     ])->post('https://fcm.googleapis.com/fcm/send', [
-        'to' => '/topics/all',
+        // 'to' => '/topics/all',
+        'registration_ids' => ['d8l6eQMCR5OHMITVOIGAUv:APA91bEaYAMejSZdRpPTh3gypJJAkI6i-lwonNgD-UDxyEsJauJyhsctFRyIEzuKxwDHRmEVEjNOK8EVaZAqfe_5Wgk_A28EqECuBGdn1IURjY9EZkgYipAImI6kKwTqUOfSwRq7deee'],
         'notification'=>[
-            "title"=> "Test title message",
-            "body"=> "Test title body",
+            "title"=> "AZ World SocialFi",
+            "body"=> "New version updated on chplay",
             "sound" => "default"
         ],
         "data"=>[
@@ -77,8 +78,8 @@ Route::get('/send_fcm', function () {
             "data"=> [
                 "click_action"=> "FLUTTER_NOTIFICATION_CLICK",
                 "other_data"=> "any message",
-                "title"=> "title",
-                "body"=> "body",
+                "title"=> "AZ World SocialFi",
+                "body"=> "",
                 "priority"=> "high",
                 "click_action"=> "FLUTTER_NOTIFICATION_CLICK"
                 ]
