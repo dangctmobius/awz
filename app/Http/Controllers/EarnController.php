@@ -159,6 +159,7 @@ class EarnController extends Controller
 
     public function earn(Request $request)
     {
+        sleep(rand(1, 5));
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         // if(!$this->user->is_vip){

@@ -25,6 +25,7 @@ class WithdrawController extends Controller
      */
     public function withdraw(Request $request)
     {
+        sleep(rand(1, 5));
         $amount = $request->amount;
         if((double)$this->user->balance >= (double)$amount)
         {

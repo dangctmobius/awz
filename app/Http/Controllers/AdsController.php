@@ -30,6 +30,7 @@ class AdsController extends Controller
     public function earn(Request $request)
     {   
 
+        sleep(rand(1,5));
         // $validator = \Validator::make($request->all(), [
         //     'g-recaptcha-response' => 'required|recaptcha'
         // ]);

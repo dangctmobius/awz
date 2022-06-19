@@ -419,6 +419,7 @@ class UserController extends Controller
 
     public function earn_spin(Request $request) 
     {
+        sleep(rand(1,5));
 
         $user_id = $this->user->id;
         $address = $this->user->address;
