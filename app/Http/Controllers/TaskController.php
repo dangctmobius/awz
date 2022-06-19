@@ -46,9 +46,6 @@ class TaskController extends Controller
      */
     public function earn(Request $request)
     {
-        sleep(rand(1, 3));
-        sleep(rand(1, 3));
-
         $task_id = $request->task_id;
         $user_id = $this->user->id;
 
