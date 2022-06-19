@@ -68,7 +68,7 @@ class TaskController extends Controller
                 $reward = intval($reward);
                 $key =  $user_id.'_'.$now;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now, 'key' => $key]);
                     User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(true, 'success');
                 }else{
