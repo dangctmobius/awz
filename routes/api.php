@@ -19,6 +19,7 @@ use App\Http\Controllers\AirdropSubmitController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\NotificationController;
 
 
 
@@ -244,4 +245,13 @@ Route::group([
 
 ], function ($router) {
     Route::get('/check_show_offers', [AdsController::class, 'check_show_offers'])->middleware(['check_token','auth:api']);
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'notification'
+
+], function ($router) {
+    Route::get('/list', [NotificationController::class, 'list'])->middleware(['check_token','auth:api']);
 });
