@@ -29,8 +29,6 @@ class AdsController extends Controller
 
     public function earn(Request $request)
     {   
-
-        sleep(rand(1, 5));
         // $validator = \Validator::make($request->all(), [
         //     'g-recaptcha-response' => 'required|recaptcha'
         // ]);
@@ -45,6 +43,8 @@ class AdsController extends Controller
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
+        $now = Carbon::now();
+        
         if($address)
         {   
             $balance = $this->check_vip($address);
@@ -56,8 +56,11 @@ class AdsController extends Controller
                     $price = $this->getPrice();
                     $reward =  (double)env('POINT_REWARD_ADS') / $price;
                     $reward = intval($reward);
+
+                    $key = $user_id.'_'.$now;
+
                     if(true){
-                        $history = Earn::insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => Carbon::now()]);
+                        $history = Earn::insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'ads', 'description' => 'Reward from ads', 'created_at' => $now, 'key' => $key]);
                         User::where('id', $user_id)->increment('pending_balance', $reward);
                         return $this->responseOK(true, 'success');
                     }else{

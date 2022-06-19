@@ -159,14 +159,15 @@ class EarnController extends Controller
 
     public function earn(Request $request)
     {
-        sleep(rand(1, 3));
-        sleep(rand(1, 3));
-        
+       
+
+
         $task_id = $request->task_id;
         $user_id = $this->user->id;
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
+        $now = Carbon::now();
         if(!$this->user->address)
         {   
             $total_earn = \DB::table('earns')->where('user_id', $user_id)->whereDate('created_at', '>=', \Carbon::today())->count();
@@ -176,8 +177,10 @@ class EarnController extends Controller
                 $reward = $reward->reward;
                 $price = $this->getPrice();
                 $reward =  (double)env('POINT_REWARD_TASK') / $price;
+
+                $key = $user_id.'_'.$now;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => time()]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now, 'key' => $key]);
                     User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(null, 'success');
                 }else{
