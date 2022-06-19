@@ -419,8 +419,7 @@ class UserController extends Controller
 
     public function earn_spin(Request $request) 
     {
-        sleep(rand(1, 3));
-        sleep(rand(1, 3));
+        
 
         $user_id = $this->user->id;
         $address = $this->user->address;
@@ -429,6 +428,8 @@ class UserController extends Controller
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
+        $now = Carbon::now();
+
         if($address && $balance)
         {   
 
@@ -454,7 +455,8 @@ class UserController extends Controller
                         $reward =  $this->spin_list_item[$reward]['value'] / $price;
                         $reward = intval($reward);
 
-                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
+                        $key = $user_id.'_'.$now;
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => $now, 'key' => $key]);
                         User::where('id', $user_id)->increment('pending_balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
