@@ -66,7 +66,7 @@ class TaskController extends Controller
                 $price = $this->getPrice();
                 $reward =  (double)env('POINT_REWARD_TASK') / $price;
                 $reward = intval($reward);
-                $key =  $user_id.'_'.$now;
+                $key =  $user_id.'_'.$now->format('Y-m-d');
                 if($earn){
                     $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now, 'key' => $key]);
                     User::where('id', $user_id)->increment('pending_balance', $reward);
