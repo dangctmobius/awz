@@ -130,7 +130,9 @@ class SystemController extends Controller
             'product_ids' => [
                 'subscription_silver',
                 'subscription_gold',
-            ]
+            ],
+            'withdraw_processing_time' => '48 hours',
+            'withdraw_fee' => 'Free',
             
         ];
 
