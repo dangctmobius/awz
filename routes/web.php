@@ -65,7 +65,7 @@ Route::get('/send_fcm', function () {
         'Content-Type' => 'application/json' 
     ])->post('https://fcm.googleapis.com/fcm/send', [
         // 'to' => '/topics/all',
-        'registration_ids' => ['d8l6eQMCR5OHMITVOIGAUv:APA91bEaYAMejSZdRpPTh3gypJJAkI6i-lwonNgD-UDxyEsJauJyhsctFRyIEzuKxwDHRmEVEjNOK8EVaZAqfe_5Wgk_A28EqECuBGdn1IURjY9EZkgYipAImI6kKwTqUOfSwRq7deee'],
+        'registration_ids' => ['dYB_ZOXgS0N1ilGDezU4LR:APA91bF1tbWWL_SBxw1WX1YYqIne1HjSpno1IYZohYeORb8-oZM3iED-zOZmebE51rLViOcvB8PsYpfUgNH9ynR0-APXaMpvo4KV3JH2S_WCjtJKJE7zqAIg2KzkVetGyO9odW1msq0h'],
         'notification'=>[
             "title"=> "AZ World SocialFi",
             "body"=> "New version updated on chplay",
