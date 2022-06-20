@@ -341,21 +341,32 @@ class UserController extends Controller
         $address = $this->user->address;
         // if($address && $this->check_vip($address))
         // {   
-            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
+            $after = 36;
+            // echo (Carbon::now()->toDateTimeString());
+            $date = Carbon::now()->subHours($after)->toDateTimeString();
+            // echo ($date);
+            // dd(Carbon::parse($date)->diffInHours(Carbon::now()));
+            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $spin = (int)env('LIMIT_REWARD_SPIN') - $total_earn;
-
                     $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
-                    
                     $data['total_spin'] = $spin;
                     $data['spin_pool'] = (int)env('POOL');
                     if($earn) {
                         $data['remain_pool'] = $data['spin_pool'] - $earn;
                     }
-                    
                     return $this->responseOK($data, 'success');
             } else {
-                return $this->responseError('You spin max daily.', 200);
+
+                $earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
+
+                $created_at = ($earn->created_at->toDateTimeString());
+
+                $count_down = $after * 60 -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
+
+                $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
+
+                return $this->responseError('You spin max every 36 hours. Spin after '.$count_down . 'm', 200);
             }
            
         // } else {
@@ -430,12 +441,18 @@ class UserController extends Controller
         // }
         $now = Carbon::now();
 
+        $after = 36;
+        // echo (Carbon::now()->toDateTimeString());
+        $date = $now->subHours($after)->toDateTimeString();
+        // echo ($date);
+        // dd(Carbon::parse($date)->diffInHours(Carbon::now()));
+
         if($address && $balance)
         {   
 
             if( $balance >= (int)env('AMOUNT_TOKEN_IS_VIP1')) {
 
-                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
+                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->count();
                 if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                         $reward = 1;
                         foreach($this->input as $item) {
@@ -456,11 +473,20 @@ class UserController extends Controller
                         $reward = intval($reward);
 
                         $key = $user_id.'_'.$now;
-                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => $now, 'key' => $key]);
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now(), 'key' => $key]);
                         User::where('id', $user_id)->increment('pending_balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
-                    return $this->responseError('You spin max daily.', 200);
+
+                    $earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
+
+                    $created_at = ($earn->created_at->toDateTimeString());
+
+                    $count_down = $after * 60 -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
+
+                    $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
+
+                    return $this->responseError('You spin max every 36 hours. Spin after '.$count_down . 'm', 200);
                 }
             } else {
                 return $this->responseError('You\'re not a VIP 2 member.', 200);    
