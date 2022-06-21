@@ -65,10 +65,10 @@ Route::get('/send_fcm', function () {
         'Content-Type' => 'application/json' 
     ])->post('https://fcm.googleapis.com/fcm/send', [
         // 'to' => '/topics/all',
-        'registration_ids' => ['dYB_ZOXgS0N1ilGDezU4LR:APA91bF1tbWWL_SBxw1WX1YYqIne1HjSpno1IYZohYeORb8-oZM3iED-zOZmebE51rLViOcvB8PsYpfUgNH9ynR0-APXaMpvo4KV3JH2S_WCjtJKJE7zqAIg2KzkVetGyO9odW1msq0h'],
+        'registration_ids' => ['fo_2tlC-T_ed1Bl9I8QqC7:APA91bGdx0mGA_AL40EcUVxLm8TnL2yhpN6mxvygaLNcnbpBnFaisQfnXSFPicvByg_4ZfilLFiQ0106yFiKB5oKYbRn8Q8AlqUexjg3WZfCy59OpJX83kRk8Ik7AlNFK2lR56oWVsmq'],
         'notification'=>[
             "title"=> "AZ World SocialFi",
-            "body"=> "New version updated on chplay",
+            "body"=> "You do not hold the required token so the revenue is denied",
             "sound" => "default"
         ],
         "data"=>[
