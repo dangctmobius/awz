@@ -151,11 +151,7 @@ class Controller extends BaseController
 
     public function getPrice(){
         
-        // $response = Http::get('https://api.pancakeswap.info/api/v2/tokens/'.env('CONTRACT'),);
-        // $price =  $response->json();
-        // $price = $price['data']['price'];
-        // $decimal =  10 ** (int)env('CONTRACT_DEC');
-        // return (double)$price;
+        
         
         try {
             $response = Http::get('https://api.coingecko.com/api/v3/simple/price?ids=az-world-socialfi&vs_currencies=usd');
@@ -164,7 +160,11 @@ class Controller extends BaseController
             $decimal =  10 ** (int)env('CONTRACT_DEC');
             return (double)$price;
         } catch(\Exception $e){
-            return 0;
+            $response = Http::get('https://api.pancakeswap.info/api/v2/tokens/'.env('CONTRACT'),);
+            $price =  $response->json();
+            $price = $price['data']['price'];
+            $decimal =  10 ** (int)env('CONTRACT_DEC');
+            return (double)$price;
         }
         
 
