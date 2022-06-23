@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,7 @@ Route::get('testnet', function () {
     echo $html;
 })->name('testnet');
 
+Route::get('/azw_price', [Controller::class, 'getPrice']);
 
 Route::get('/reset_task', function(){
     \DB::table('user_ptc_task')->truncate();
