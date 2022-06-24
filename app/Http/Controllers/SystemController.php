@@ -90,8 +90,8 @@ class SystemController extends Controller
                     'sub_title' => '- You  click  Ads or Read to earn - You will earn $\n- Limited click per day | Earn 80% Revenue1'
                 ],
                 [
-                    'title' => 'Short Link To Earn',
-                    'sub_title' => '- Shorten your long link ( documents...) and share\n- When user click you will get 80% Revenue of Ads'
+                    'title' => 'Short Link To Earn (Soon)',
+                    'sub_title' => '- Shorten your long link ( documents...) and share'
                 ],
                 [
                     'title' => 'Shopping Cashback',
