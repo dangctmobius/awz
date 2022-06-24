@@ -45,7 +45,7 @@ class SystemController extends Controller
             'amount_bet_dice' => env('AMOUNT_BET_DICE'),
             'page_offer' => 'When you do the task you will be paid AZW tokens, up to 10,000 AWZ. 5 Point in task = 1 AZW',
             'setting_page' => 'Note: 1 Email only connects with 1 Wallet',
-            'page_withdrawal_help' => 'Step 1: Connect your wallet\nStep 2: You must make sure you have purchased the AZW Token\nStep 3: You can visit the website azworld.network for instructions to buy Tokens\nStep 4: You agree that wallet only see balance\nStep 5: We confirm you have been promoted to membership\nStep 6: You must hold AZW to use the monetization functions',
+            'page_withdrawal_help' => 'Step 1: Connect your wallet\nStep 2: You must make sure you have purchased the AZW Token\nStep 3: You can visit the website azworld.network for instructions to buy Tokens\nStep 4: You must hold AZW to use the monetization functions',
             'page_member_main' => '1.  Connect your wallet\n2. Hold '.env('AMOUNT_TOKEN_IS_VIP').'AZW in wallet\n3.  Membership upgrade confirmation',
             'page_member_help' => 'Step 1: Connect your wallet\nStep 2: You must make sure you have purchased the AZW Token\nStep 3: You can visit the website azworld.network for instructions to buy Tokens\nStep 4: You agree that wallet only see balance\nStep 5: We confirm you have been promoted to membership\nStep 6: You must hold AZW to use the monetization functions',
             'page_home' => '👉 If you see Processing  - Our partners and system are checking it 1/ Pending —> 2/ Offchain —> 3/ Withdrawal —> 4/ Onchain ( To Wallet ). VIP1: '.env('AMOUNT_TOKEN_IS_VIP').'. VIP2: '.env('AMOUNT_TOKEN_IS_VIP1'),
