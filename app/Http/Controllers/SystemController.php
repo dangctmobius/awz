@@ -107,11 +107,11 @@ class SystemController extends Controller
                 ],
                 [
                     'title' => 'Live Channel',
-                    'sub_title' => '- Where fans can support celebrities with $AZW tokens\n- Join the advanced fan channel with exclusive benefit'
+                    'sub_title' => '- Where fans can support celebrities with $AZW tokens\n- Channel with exclusive benefit'
                 ],
                 [
                     'title' => 'Referral',
-                    'sub_title' => '- Share the link or code, you will get Free AZW\n- Get up to20% Commission of their Shopping Cashback'
+                    'sub_title' => '- Share the link or code, you will get Free AZW\n- Get up to 20% Commission of their Shopping Cashback'
                 ],
                 [
                     'title' => 'AZ Shop | E-product',
@@ -119,7 +119,7 @@ class SystemController extends Controller
                 ],
                 [
                     'title' => 'Offers - Install app - Surveys',
-                    'sub_title' => '- Click here to get more reward'
+                    'sub_title' => '- Click here to get more rewards'
                 ],
                 [
                     'title' => 'Member',
