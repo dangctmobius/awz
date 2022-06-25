@@ -164,9 +164,8 @@ class AuthController extends Controller
 
             if (VerificationCode::verify($code, $email))
             {
-
                 $user = User::where('email', $email)->first();
-                if ($user->is_ban) {
+                if ($user && $user->is_ban) {
                     return $this->responseError('Your account banned!', 201);
                 }
                 if ($user) {
