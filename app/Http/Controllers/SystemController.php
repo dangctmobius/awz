@@ -87,7 +87,7 @@ class SystemController extends Controller
             'menu' => [
                 [
                     'title' => 'Paid To Click - Read to earn',
-                    'sub_title' => '- You  click  Ads or Read to earn - You will earn $\n- Limited click per day | Earn 80% Revenue1'
+                    'sub_title' => '- You  click  Ads or Read to earn - You will earn $\n- Limited click per day | Earn 80% Revenue'
                 ],
                 [
                     'title' => 'Short Link To Earn (Soon)',
