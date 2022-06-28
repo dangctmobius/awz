@@ -132,7 +132,7 @@ class SystemController extends Controller
                 'subscription_gold',
                 'donate_for_azworld'
             ],
-            'withdraw_processing_time' => '48 hours',
+            'withdraw_processing_time' => 'system checking',
             'withdraw_fee' => 'Free',
             
         ];
@@ -239,7 +239,7 @@ class SystemController extends Controller
                         'subscription_gold',
                         'donate_for_azworld'
                     ],
-                    'withdraw_processing_time' => '48 hours',
+                    'withdraw_processing_time' => 'system checking',
                     'withdraw_fee' => 'Free',
                 ],
                 
