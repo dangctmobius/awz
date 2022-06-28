@@ -133,7 +133,7 @@ class SystemController extends Controller
                 'donate_for_azworld'
             ],
             'withdraw_processing_time' => 'system checking',
-            'withdraw_fee' => 'Currently Free',
+            'withdraw_fee' => 'Currently: Free - Burn 0%',
             
         ];
 
@@ -240,7 +240,7 @@ class SystemController extends Controller
                         'donate_for_azworld'
                     ],
                     'withdraw_processing_time' => 'system checking',
-                    'withdraw_fee' => 'Currently Free',
+                    'withdraw_fee' => 'Currently: Free - Burn 0%',
                 ],
                 
             ];
