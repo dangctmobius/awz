@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Earn;
 use Illuminate\Support\Carbon;
 
 class TaskController extends Controller
@@ -57,7 +58,28 @@ class TaskController extends Controller
         // }
         if(($address &&  $this->check_vip($address)))
         {   
+
+            $now = Carbon::now();
+
+            $after = 15; //minute
+            // echo (Carbon::now()->toDateTimeString());
+            $date = Carbon::now()->subMinutes($after);
+
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
+            $total_earn2 = Earn::where('user_id', $user_id)->where('subject', 'tasks')->where('created_at' , '>=', $date)->count();
+
+            if($total_earn2 > 0) {
+                
+                $earn = Earn::where('user_id', $user_id)->where('subject', 'tasks')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
+
+                $created_at = ($earn->created_at->toDateTimeString());
+
+                $count_down = $after  -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
+
+                // $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
+
+                return $this->responseError('You can earn every '.$after.' minutes. After '.$count_down . 'm', 200);
+            }
             if($total_earn < (int)env('MAX_VIP_CLICK_TASK')) {
                 
                 $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => $now]);
