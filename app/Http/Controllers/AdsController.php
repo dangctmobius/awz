@@ -88,7 +88,7 @@ class AdsController extends Controller
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
-        return $this->responseError('You can use P2C for now. We are updating Video ADS', 200);
+        // return $this->responseError('You can use P2C for now. We are updating Video ADS', 200);
 
         $now = Carbon::now();
 
