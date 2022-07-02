@@ -608,7 +608,7 @@ class UserController extends Controller
 
         $total24h = \DB::table('tickets')->where('user_id', $user_id)->whereDate('created_at', Carbon::today())->count();
         if($total24h > 0) {
-            return $this->responseError('only 24h for 1 ticket', 200);
+            return $this->responseError(' We received your message, only 24h for 1 ticket. We will reply you within 24h', 200);
         }
         $insert = \DB::table('tickets')->insert(
             [
