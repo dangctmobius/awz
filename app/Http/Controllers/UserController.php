@@ -604,7 +604,8 @@ class UserController extends Controller
     {
         $subject = $request->subject;
         $description = $request->description;
-
+        $user_id = $this->user->id;
+        
         $insert = \DB::table('tickets')->insert(
             [
                 'subject' => $subject,
