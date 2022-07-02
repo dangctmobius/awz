@@ -617,7 +617,7 @@ class UserController extends Controller
             return $this->responseOK('ok', 'success');
         }
 
-        return $this->responseError('only 24h for send ticket', 200);
+        return $this->responseError('only 24h for 1 ticket', 200);
     }
 
 }
