@@ -602,8 +602,22 @@ class UserController extends Controller
 
     public function ticket(Request $request)
     {
-        // return $this->responseOK('ok', 'success');
-        return $this->responseError('24h for send ticket', 200);
+        $subject = $request->subject;
+        $description = $request->description;
+
+        $insert = \DB::insert(
+            [
+                'subject' => $subject,
+                'description' => $description,
+                'user_id' => $user_id,
+                'created_at' => Carbon::now()
+            ]
+        );
+        if($insert) {
+            return $this->responseOK('ok', 'success');
+        }
+
+        return $this->responseError('only 24h for send ticket', 200);
     }
 
 }
