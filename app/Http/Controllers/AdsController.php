@@ -92,7 +92,7 @@ class AdsController extends Controller
 
         $now = Carbon::now();
 
-        $after = 1; //minute
+        $after = 10; //minute
         // echo (Carbon::now()->toDateTimeString());
         $date = Carbon::now()->subMinutes($after);
         
