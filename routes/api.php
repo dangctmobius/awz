@@ -255,3 +255,11 @@ Route::group([
 ], function ($router) {
     Route::get('/list', [NotificationController::class, 'list'])->middleware(['check_token','auth:api']);
 });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'ticket'
+
+], function ($router) {
+    Route::post('/add', [UserController::class, 'ticket'])->middleware(['check_token','auth:api']);
+});

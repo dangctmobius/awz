@@ -89,12 +89,35 @@ class AdsController extends Controller
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
         return $this->responseError('You can use P2C for now. We are updating Video ADS', 200);
+
+        $now = Carbon::now();
+
+        $after = 1; //minute
+        // echo (Carbon::now()->toDateTimeString());
+        $date = Carbon::now()->subMinutes($after);
+        
         if($address && $this->check_vip($address))
         {   
+            $total_earn2 = Earn::where('user_id', $user_id)->where('subject', 'ads')->where('created_at' , '>=', $date)->count();
+
+            if($total_earn2 > 0) {
+                
+                $earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
+
+                $created_at = ($earn->created_at->toDateTimeString());
+
+                $count_down = $after  -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
+
+                // $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
+
+                return $this->responseError('You can watch every '.$after.' minutes. After '.$count_down . 'm', 200);
+            }
+
+
             $total_earn = Earn::where('user_id', $user_id)->where('subject', 'ads')->whereDate('created_at', Carbon::today())->count();
-            
             if($total_earn < MAX_VIP_REWARD_ADS)
             { 
+
                     return $this->responseOK(['allow_show_ads' => 1], 'success');
 
             } else {

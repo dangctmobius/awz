@@ -600,4 +600,10 @@ class UserController extends Controller
 
     }
 
+    public function ticket(Request $request)
+    {
+        // return $this->responseOK('ok', 'success');
+        return $this->responseError('24h for send ticket', 200);
+    }
+
 }
