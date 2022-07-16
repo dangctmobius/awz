@@ -217,7 +217,7 @@ class AuthController extends Controller
                     User::where('email', $email)->update(['fcm_token' => $request->fcm_token]);
                 }
                 if($request->device) {
-                    \DB::table('login_logs')->insert(['user_id' => Auth::user()->id, 'device' => $request->device ?? '1', 'created_at' => now(), 'time_login' => $request->time_login ?? 1]);
+                    \DB::table('login_logs')->insert(['user_id' => Auth::user()->id, 'device' => $request->device ?? '1', 'created_at' => now(), 'time_login' => $request->time_login ?? 1, 'ip' => $this->getip()]);
                 }
                
 
