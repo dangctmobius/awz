@@ -220,46 +220,42 @@ class UserController extends Controller
         $data = [
             'address' => $address ?? NULL,
             ];
-        
-        
-        
-        if ($this->user->metamask_address && $this->user->metamask_address == $address) {
-             
 
-        } else if($this->user->metamask_address && $this->user->metamask_address != $address) {
+        if ($this->user->metamask_address && $this->user->metamask_address == $address) {
+            
+            $update = User::where('id', $this->user->id)->update($data);
+            if($update) {
+                return $this->responseOK('Update wallet address success');
+            } else {
+                return $this->responseError('Update wallet address error', 200);
+            }
+            
+
+        }
+        if($this->user->metamask_address && $this->user->metamask_address != $address) {
 
             return $this->responseError('You connected this email with other address', 200);
 
-        } 
+        }
+
         $check_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
 
         if($check_address)
         {
-            return $this->responseError('You connected this email with other address', 200);
+            return $this->responseError('Can not connect this address, please try other address', 200);
             
         } else {
-            $other_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
-            if ( $other_address) {
-                return $this->responseError('This address connected with email: '.$other_address->email, 200);
+            $update = User::where('id', $this->user->id)->update($data);
+            if($update) {
+                return $this->responseOK('Update wallet address success');
+            } else {
+                return $this->responseError('Update wallet address error', 200);
             }
         }
-
         
-        return $this->responseError('Have a error, please contact admin team!', 200);
-
+    
+            
         
-
-        $update = User::where('id', $this->user->id)->update($data);
-        // $user = User::where('email', $email)->first();
-        // $data = [];
-        // $data['item'] = $user;
-        if($update) {
-            return $this->responseOK('Update wallet address success');
-            // return \Redirect::to('https://connect.azworld.network?connect=success');
-        } else {
-            return $this->responseError('Update wallet address error', 200);
-            // return \Redirect::to('https://connect.azworld.network?connect=error');
-        }
     }
 
     public function refs(Request $request)
@@ -352,7 +348,7 @@ class UserController extends Controller
         $address = $this->user->address;
         // if($address && $this->check_vip($address))
         // {   
-            $after = 36;
+            $after = 34;
             // echo (Carbon::now()->toDateTimeString());
             $date = Carbon::now()->subHours($after)->toDateTimeString();
             // echo ($date);
@@ -452,7 +448,7 @@ class UserController extends Controller
         // }
         $now = Carbon::now();
 
-        $after = 34;
+        $after = 36;
         // echo (Carbon::now()->toDateTimeString());
         $date = $now->subHours($after)->toDateTimeString();
         // echo ($date);
