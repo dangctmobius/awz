@@ -452,7 +452,7 @@ class UserController extends Controller
         // }
         $now = Carbon::now();
 
-        $after = 36;
+        $after = 34;
         // echo (Carbon::now()->toDateTimeString());
         $date = $now->subHours($after)->toDateTimeString();
         // echo ($date);
