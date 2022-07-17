@@ -220,7 +220,9 @@ class UserController extends Controller
         $data = [
             'address' => $address ?? NULL,
             ];
-
+        
+        
+        
         if ($this->user->metamask_address && $this->user->metamask_address == $address) {
              
 
@@ -228,13 +230,22 @@ class UserController extends Controller
 
             return $this->responseError('You connected this email with other address', 200);
 
+        } 
+        $check_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
+
+        if($check_address)
+        {
+            return $this->responseError('You connected this email with other address', 200);
+            
         } else {
             $other_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
             if ( $other_address) {
                 return $this->responseError('This address connected with email: '.$other_address->email, 200);
             }
         }
+
         
+        return $this->responseError('Have a error, please contact admin team!', 200);
 
         
 
