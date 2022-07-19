@@ -373,7 +373,7 @@ class UserController extends Controller
 
                 $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
 
-                return $this->responseError('You spin max every 36 hours. Spin after '.$count_down . 'm', 200);
+                return $this->responseError('You spin max every 48 hours. Spin after '.$count_down . 'm', 200);
             }
            
         // } else {
