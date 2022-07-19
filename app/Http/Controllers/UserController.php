@@ -348,7 +348,7 @@ class UserController extends Controller
         $address = $this->user->address;
         // if($address && $this->check_vip($address))
         // {   
-            $after = 34;
+            $after = 48;
             // echo (Carbon::now()->toDateTimeString());
             $date = Carbon::now()->subHours($after)->toDateTimeString();
             // echo ($date);
