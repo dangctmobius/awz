@@ -348,7 +348,7 @@ class UserController extends Controller
         $address = $this->user->address;
         // if($address && $this->check_vip($address))
         // {   
-            $after = 48;
+            $after = (int)env('SPIN_TIME');
             // echo (Carbon::now()->toDateTimeString());
             $date = Carbon::now()->subHours($after)->toDateTimeString();
             // echo ($date);
@@ -373,7 +373,7 @@ class UserController extends Controller
 
                 $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
 
-                return $this->responseError('You spin max every 48 hours. Spin after '.$count_down . 'm', 200);
+                return $this->responseError('You spin max every '.(int)env('SPIN_TIME').' hours. Spin after '.$count_down . 'm', 200);
             }
            
         // } else {
