@@ -152,7 +152,7 @@ class Controller extends BaseController
     public function getPrice()
     {    
         $price = 0;
-        $leaders = \Cache::remember('price', 300, function () use($price) {
+        $leaders = \Cache::remember('price', 60, function () use($price) {
             try {
                 $response = Http::get('https://api.coingecko.com/api/v3/simple/price?ids=az-world-socialfi&vs_currencies=usd');
                 $price =  $response->json();
