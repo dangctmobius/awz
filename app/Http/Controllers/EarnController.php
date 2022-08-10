@@ -54,9 +54,16 @@ class EarnController extends Controller
         }else {
             $subjects = [];
         }
+        $queryEarn = Earn::query();
+
+        if($request->select_date) {
+            $queryEarn->whereDate( 'created_at', '=', $request->select_date);
+        }
+
+
         $data = [];
-        $data['total'] = Earn::count();
-        $products = Earn::where('user_id', $user_id)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
+        $data['total'] = 0;
+        $products = $queryEarn->where('user_id', $user_id)->whereIn('subject', $subjects)->skip($page*$limit)->orderBy('id', 'desc')->take($limit)->get();
         $data['page'] = $page;
         $data['limit'] = $limit;
         $data['items'] = $products;

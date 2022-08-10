@@ -136,7 +136,8 @@ class SystemController extends Controller
             'withdraw_processing_time' => 'System checking',
             'withdraw_fee' => 'Currently: Free - Burn 0%',
             'enable_chart' => 1,
-            'chart_api' => 'https://api.coingecko.com/api/v3/coins/az-world-socialfi/ohlc?vs_currency=usd&days=7'
+            'chart_api' => 'https://api.coingecko.com/api/v3/coins/az-world-socialfi/ohlc?vs_currency=usd&days=7',
+            'lottery_exp_time' => 1561198600000,
             
         ];
 
