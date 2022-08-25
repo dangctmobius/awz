@@ -77,6 +77,7 @@ class UserController extends Controller
         //     $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
         // }])
         ->first();
+        $user['notification_count'] = 10;
         return $this->responseOk($user);
     }
 
