@@ -11,19 +11,39 @@ class CheckToken
 
     public function handle(Request $request, Closure $next)
     {   
+        $time_cache = 5;
         $time_request = $request->time_request;
         $code = $request->code;
+        $now = \Carbon\Carbon::now()->timestamp;
+        $driff = ($now - ($time_request/10**6)) / 60;
+        if($driff > $time_cache) {
+            echo json_encode(['error' => 'code 22']);die;
+        }
         if (isset($time_request) && md5(md5(env('SECURITY_CODE').$time_request)) === $code)
-        {   
-            $token = \DB::table('token_requests')->where('token', $code)->count();
-            if ($token > 0) {
-                echo json_encode(['error' => 'code 20']);die;
+        {  
+             if(!env('APP_DEBUG')) {
+                // $token = \DB::table('token_requests')->where('token', $code)->count();
+                $token = \Cache::get($code);
+                if ($token) {
+                    echo json_encode(['error' => 'code 20']);die;
+                }
+                $token = \Cache::remember($code, 60*$time_cache, function () use($time_request) {
+                    return $time_request;
+                 });
+                // \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
             }
-            \DB::table('token_requests')->insert(['token' => $code, 'timestamp' => $time_request, 'created_at' => time(), 'ip' => $this->getIp()]);
+
+            if (\Auth::check()) {
+                $user = auth()->user();
+                if ($user->is_ban) {
+                    return redirect()->route('login');
+                    abort(403);        
+                }
+            }
+          
             return $next($request);
 
-        } else {
-           
+        } else { 
             echo json_encode(['error' => 'code 21']);die;
         }
     }
