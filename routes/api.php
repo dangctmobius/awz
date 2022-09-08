@@ -19,7 +19,6 @@ use App\Http\Controllers\AirdropSubmitController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WithdrawController;
-use App\Http\Controllers\NotificationController;
 
 
 
@@ -41,20 +40,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'system'
-
-], function ($router) {
-    Route::get('/app_version', [SystemController::class, 'app_version']);
-    Route::get('/allow_function', [SystemController::class, 'allow_function']);
-    Route::get('/home_alert', [SystemController::class, 'home_alert']);
-    Route::get('/guest', [SystemController::class, 'guest_token']);
-    Route::get('/currency', [SystemController::class, 'currency']);
-
-});
-
-
-Route::group([
-    'middleware' => 'api',
     'prefix' => 'auth'
 
 ], function ($router) {
@@ -65,6 +50,19 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     Route::post('/changepass', [AuthController::class, 'changepass']);
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'system'
+
+], function ($router) {
+    Route::get('/app_version', [SystemController::class, 'app_version']);
+    Route::get('/allow_function', [SystemController::class, 'allow_function']);
+    Route::get('/home_alert', [SystemController::class, 'home_alert']);
+    Route::get('/guest', [SystemController::class, 'guest_token']);
+    Route::get('/currency', [SystemController::class, 'currency']);
+
 });
 
 
@@ -236,30 +234,4 @@ Route::group([
 ], function ($router) {
     Route::post('/withdraw', [WithdrawController::class, 'withdraw'])->middleware(['check_token','auth:api']);
     Route::get('/list', [WithdrawController::class, 'list'])->middleware(['check_token','auth:api']);
-});
-
-
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'offer'
-
-], function ($router) {
-    Route::get('/check_show_offers', [AdsController::class, 'check_show_offers'])->middleware(['check_token','auth:api']);
-});
-
-
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'notification'
-
-], function ($router) {
-    Route::get('/list', [NotificationController::class, 'list'])->middleware(['check_token','auth:api']);
-});
-
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'ticket'
-
-], function ($router) {
-    Route::post('/add', [UserController::class, 'ticket'])->middleware(['check_token','auth:api']);
 });

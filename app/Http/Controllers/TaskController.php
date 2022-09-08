@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Earn;
 use Illuminate\Support\Carbon;
 
 class TaskController extends Controller
@@ -52,45 +51,22 @@ class TaskController extends Controller
 
         $address = $this->user->address;
         $allow = false;
-        $now = Carbon::now();
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
         if(($address &&  $this->check_vip($address)))
         {   
-
-            $now = Carbon::now();
-
-            $after = 10; //minute
-            // echo (Carbon::now()->toDateTimeString());
-            $date = Carbon::now()->subMinutes($after);
-
             $total_earn = \DB::table('user_ptc_task')->where('user_id', $user_id)->count();
-            $total_earn2 = Earn::where('user_id', $user_id)->where('subject', 'tasks')->where('created_at' , '>=', $date)->count();
-
-            if($total_earn2 > 0) {
-                
-                $earn = Earn::where('user_id', $user_id)->where('subject', 'tasks')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
-
-                $created_at = ($earn->created_at->toDateTimeString());
-
-                $count_down = $after  -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
-
-                // $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
-
-                return $this->responseError('You can earn every '.$after.' minutes. After '.$count_down . 'm', 200);
-            }
             if($total_earn < (int)env('MAX_VIP_CLICK_TASK')) {
                 
-                $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => $now]);
+                $earn = \DB::table('user_ptc_task')->insert(['task_id' => $task_id, 'user_id' => $user_id, 'created_at' => Carbon::now()]);
                 $reward = Task::where('id', $task_id)->first();
                 $reward = $reward->reward;
                 $price = $this->getPrice();
                 $reward =  (double)env('POINT_REWARD_TASK') / $price;
                 $reward = intval($reward);
-                $key =  $user_id.'_'.$now;
                 if($earn){
-                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => $now, 'key' => $key]);
+                    $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'tasks', 'description' => 'Reward from ptc', 'created_at' => Carbon::now()]);
                     User::where('id', $user_id)->increment('pending_balance', $reward);
                     return $this->responseOK(true, 'success');
                 }else{

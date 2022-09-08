@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Earn;
 use Validator;
 use NextApps\VerificationCode\VerificationCode;
 use App\Jobs\SentMailVerify;
@@ -19,6 +18,7 @@ class AuthController extends Controller
      * @return void
      */
     protected $password;
+
     protected $email_allow;
 
     public function __construct() {
@@ -111,15 +111,11 @@ class AuthController extends Controller
                                     $price = $this->getPrice();
                                     $reward =  (double)env('POINT_REWARD_REF') / $price;
 
-                                    
-                                    
-                                        $total_earn = Earn::where('user_id', $check_code->id)->where('subject', 'ref')->whereDate('created_at', Carbon::today())->count();
-                                        if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
-                                            \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 1, 'reward' => intval($reward), 'subject' => 'ref', 'description' => 'Reward from referral', 'created_at' => Carbon::now()]);
-                                            User::where('id', $check_code->id)->increment('pending_balance',  intval($reward));
-                                        }
-                                    
-                                    
+                                    $total_earn = Earn::where('user_id', $user->id)->where('subject', 'ref')->whereDate('created_at', Carbon::today())->count();
+                                    if($total_earn < (int)env('LIMIT_ADS_VIDEO')) {
+                                        \DB::table('earns')->insert(['user_id' => $check_code->id, 'status' => 1, 'reward' => $reward, 'subject' => 'ref', 'description' => 'Reward from referral', 'created_at' => Carbon::now()]);
+                                        User::where('id', $check_code->id)->increment('pending_balance',  1);
+                                    }
                                 }
                                 //  else {
                                 //     return $this->responseError('Invalid referral code', 201);
@@ -164,8 +160,9 @@ class AuthController extends Controller
 
             if (VerificationCode::verify($code, $email))
             {
+
                 $user = User::where('email', $email)->first();
-                if ($user && $user->is_ban) {
+                if ($user->is_ban) {
                     return $this->responseError('Your account banned!', 201);
                 }
                 if ($user) {
@@ -205,21 +202,10 @@ class AuthController extends Controller
                 $credentials = $request->only(['email']);
 
                 // $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
                 if (! $token = $this->guard()->attempt(['email' => $credentials['email'], 'password' => ($request->pass) ])) {
                     return $this->responseError('Incorrect email or password', 201);
                 }
-
-                if (Auth::user()->is_ban) {
-                    return $this->responseError('Your account banned!', 201);
-                }
-
-                if($request->fcm_token) {
-                    User::where('email', $email)->update(['fcm_token' => $request->fcm_token]);
-                }
-                if($request->device) {
-                    \DB::table('login_logs')->insert(['user_id' => Auth::user()->id, 'device' => $request->device ?? '1', 'created_at' => now(), 'time_login' => $request->time_login ?? 1, 'ip' => $this->getip()]);
-                }
-               
 
                 return $this->respondWithToken($token, Auth::user());
 

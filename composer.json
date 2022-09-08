@@ -14,7 +14,6 @@
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "^1.0",
         "nextapps/laravel-verification-code": "^1.1",
-        "spatie/laravel-backup": "^6.16",
         "tymon/jwt-auth": "^1.0.2"
     },
     "require-dev": {

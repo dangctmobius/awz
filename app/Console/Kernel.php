@@ -15,8 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('token:reset')->hourly();
-        $schedule->command('task:reset')->daily();;
+        // $schedule->command('inspire')->hourly();
     }
 
     /**

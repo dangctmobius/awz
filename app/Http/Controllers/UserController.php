@@ -21,7 +21,7 @@ class UserController extends Controller
     public function __construct() {
         $this->middleware(['check_token','auth:api'])->except('address');
         $this->user = auth()->user();
-        $this->input = [1,1,1,0,0,1,1,0,1,0,0,1,1,1,1,0,1,2,1,1,1,1,1,1,1,1,1,1,0,0,2,1,1,0,0,1,1,0,1,0,2,1,0,2,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0];
+        $this->input = [1,1,1,0,0,1,1,0,1,0,0,1,1,1,1,0,1,2,1,1,1,1,1,1,1,1,1,1,0,0,4,1,1,0,0,1,1,0,1,0,2,1,0,2,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0];
         $this->spin_list_item = [
             
             ['color' => '#29a8ab', 'value' => 1, 'label' =>  '1'],
@@ -77,7 +77,6 @@ class UserController extends Controller
         //     $q2->select('users.id', 'users.name', 'users.email', 'users.avatar');
         // }])
         ->first();
-        $user['notification_count'] = 10;
         return $this->responseOk($user);
     }
 
@@ -218,45 +217,27 @@ class UserController extends Controller
 
         // $email = $request->email;
         $address = $request->address;
+        
         $data = [
-            'address' => $address ?? NULL,
-            ];
+        'address' => $address ?? '',
+        ];
 
-        if ($this->user->metamask_address && $this->user->metamask_address == $address) {
-            
-            $update = User::where('id', $this->user->id)->update($data);
-            if($update) {
-                return $this->responseOK('Update wallet address success');
-            } else {
-                return $this->responseError('Update wallet address error', 200);
-            }
-            
-
-        }
-        if($this->user->metamask_address && $this->user->metamask_address != $address) {
-
-            return $this->responseError('You connected this email with other address', 200);
-
+        $other_address = User::where('address', $address)->first();
+        if ($other_address) {
+            return $this->responseError('This address connected with email: '.$other_address->email, 200);
         }
 
-        $check_address = User::where('address', $address)->orWhere('metamask_address', $address)->first();
-
-        if($check_address)
-        {
-            return $this->responseError('Can not connect this address, please try other address', 200);
-            
+        $update = User::where('id', $this->user->id)->update($data);
+        // $user = User::where('email', $email)->first();
+        // $data = [];
+        // $data['item'] = $user;
+        if($update) {
+            return $this->responseOK('Update wallet address success');
+            // return \Redirect::to('https://connect.azworld.network?connect=success');
         } else {
-            $update = User::where('id', $this->user->id)->update($data);
-            if($update) {
-                return $this->responseOK('Update wallet address success');
-            } else {
-                return $this->responseError('Update wallet address error', 200);
-            }
+            return $this->responseError('Update wallet address error', 200);
+            // return \Redirect::to('https://connect.azworld.network?connect=error');
         }
-        
-    
-            
-        
     }
 
     public function refs(Request $request)
@@ -292,7 +273,7 @@ class UserController extends Controller
                 return $this->responseOK($data, 'success');
             }
         } else {
-            return $this->responseOK('You have not connected the wallet. Please connect your address!', 200);
+            return $this->responseOK('You have not connected the metamask wallet. Please connect your address!', 200);
         }
         
     }
@@ -331,7 +312,7 @@ class UserController extends Controller
     public function disconnect() {
 
         $id = $this->user->id;
-        $update = User::where('id', $id)->update(['address'=> NULL, 'metamask_address' => $this->user->metamask_address ? $this->user->metamask_address : $this->user->address]);
+        $update = User::where('id', $id)->update(['address'=> NULL]);
         $user = User::where('id', $id)->first();
         $data = [];
         $data['item'] = $user;
@@ -349,32 +330,21 @@ class UserController extends Controller
         $address = $this->user->address;
         // if($address && $this->check_vip($address))
         // {   
-            $after = (int)env('SPIN_TIME');
-            // echo (Carbon::now()->toDateTimeString());
-            $date = Carbon::now()->subHours($after)->toDateTimeString();
-            // echo ($date);
-            // dd(Carbon::parse($date)->diffInHours(Carbon::now()));
-            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->count();
+            $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
             if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                     $spin = (int)env('LIMIT_REWARD_SPIN') - $total_earn;
+
                     $earn =  Earn::where('subject', 'spin')->where('status', 2)->sum('reward');
+                    
                     $data['total_spin'] = $spin;
                     $data['spin_pool'] = (int)env('POOL');
                     if($earn) {
                         $data['remain_pool'] = $data['spin_pool'] - $earn;
                     }
+                    
                     return $this->responseOK($data, 'success');
             } else {
-
-                $earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
-
-                $created_at = ($earn->created_at->toDateTimeString());
-
-                $count_down = $after * 60 -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
-
-                $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
-
-                return $this->responseError('You spin max every '.(int)env('SPIN_TIME').' hours. Spin after '.$count_down . 'm', 200);
+                return $this->responseError('You spin max daily.', 200);
             }
            
         // } else {
@@ -438,7 +408,6 @@ class UserController extends Controller
 
     public function earn_spin(Request $request) 
     {
-        
 
         $user_id = $this->user->id;
         $address = $this->user->address;
@@ -447,20 +416,12 @@ class UserController extends Controller
         // if(!$this->user->is_vip){
         //     return $this->responseError('You are not in Mainnet List', 200);
         // }
-        $now = Carbon::now();
-
-        $after = 36;
-        // echo (Carbon::now()->toDateTimeString());
-        $date = $now->subHours($after)->toDateTimeString();
-        // echo ($date);
-        // dd(Carbon::parse($date)->diffInHours(Carbon::now()));
-
         if($address && $balance)
         {   
 
             if( $balance >= (int)env('AMOUNT_TOKEN_IS_VIP1')) {
 
-                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->count();
+                $total_earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->whereDate('created_at', Carbon::today())->count();
                 if($total_earn < (int)env('LIMIT_REWARD_SPIN')) {
                         $reward = 1;
                         foreach($this->input as $item) {
@@ -480,21 +441,11 @@ class UserController extends Controller
                         $reward =  $this->spin_list_item[$reward]['value'] / $price;
                         $reward = intval($reward);
 
-                        $key = $user_id.'_'.$now;
-                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 1, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now(), 'key' => $key]);
-                        User::where('id', $user_id)->increment('pending_balance',  $reward);
+                        $history = \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => $reward, 'subject' => 'spin', 'description' => 'Reward from spin', 'created_at' => Carbon::now()]);
+                        User::where('id', $user_id)->increment('balance',  $reward);
                         return $this->responseOK(1, 'success');
                 } else {
-
-                    $earn = Earn::where('user_id', $user_id)->where('subject', 'spin')->where('created_at' , '>=', $date)->orderBy('id', 'desc')->first();
-
-                    $created_at = ($earn->created_at->toDateTimeString());
-
-                    $count_down = $after * 60 -  Carbon::parse($created_at)->diffInMinutes(Carbon::now());
-
-                    $count_down = floor($count_down / 60).'h'.($count_down -   floor($count_down / 60) * 60);
-
-                    return $this->responseError('You spin max every 36 hours. Spin after '.$count_down . 'm', 200);
+                    return $this->responseError('You spin max daily.', 200);
                 }
             } else {
                 return $this->responseError('You\'re not a VIP 2 member.', 200);    
@@ -598,7 +549,6 @@ class UserController extends Controller
             $my_user = User::where('id', $user_id)->decrement('balance', $amount);
             \DB::table('earns')->insert(['user_id' => $user_id, 'status' => 2, 'reward' => -($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
             \DB::table('earns')->insert(['user_id' => $influ_id->user_id, 'status' => 2, 'reward' => ($amount), 'subject' => 'donate', 'description' => 'Donate for post', 'created_at' => Carbon::now()]);
-            \DB::table('donates')->insert(['user_id' => $user_id, 'post_id' => $post_id, 'amount' => $amount]);
 
         }  else {
             return $this->responseError("You don\'t have enough balance to donate", 200);
@@ -606,31 +556,6 @@ class UserController extends Controller
         $my_user = User::where('id', $user_id)->first();
         return $this->responseOK($my_user, 'success');
 
-    }
-
-    public function ticket(Request $request)
-    {
-        $subject = $request->subject;
-        $description = $request->description;
-        $user_id = $this->user->id;
-
-        $total24h = \DB::table('tickets')->where('user_id', $user_id)->whereDate('created_at', Carbon::today())->count();
-        if($total24h > 0) {
-            return $this->responseError(' We received your message, only 24h for 1 ticket. We will reply you within 24h', 200);
-        }
-        $insert = \DB::table('tickets')->insert(
-            [
-                'subject' => $subject,
-                'description' => $description,
-                'user_id' => $user_id,
-                'created_at' => Carbon::now()
-            ]
-        );
-        if($insert) {
-            return $this->responseOK('ok', 'success');
-        }
-
-        
     }
 
 }
