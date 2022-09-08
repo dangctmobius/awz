@@ -1,0 +1,9 @@
+[debug] [2022-07-30T10:47:23.805Z] ----------------------------------------------------------------------
+[debug] [2022-07-30T10:47:23.806Z] Command:       /Users/dangcao/.nvm/versions/node/v14.19.3/bin/node /Users/dangcao/.nvm/versions/node/v14.19.3/bin/firebase deploy
+[debug] [2022-07-30T10:47:23.807Z] CLI Version:   11.4.0
+[debug] [2022-07-30T10:47:23.807Z] Platform:      darwin
+[debug] [2022-07-30T10:47:23.807Z] Node Version:  v14.19.3
+[debug] [2022-07-30T10:47:23.812Z] Time:          Sat Jul 30 2022 17:47:23 GMT+0700 (Indochina Time)
+[debug] [2022-07-30T10:47:23.812Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-07-30T10:47:23.817Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]

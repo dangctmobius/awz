@@ -149,15 +149,28 @@ class Controller extends BaseController
         return $response->json();
     }
 
-    public function getPrice(){
-        
-        $response = Http::get('https://api.pancakeswap.info/api/v2/tokens/'.env('CONTRACT'),);
-        $price =  $response->json();
-        $price = $price['data']['price'];
-        $decimal =  10 ** (int)env('CONTRACT_DEC');
-        return (double)$price;
-
+    public function getPrice()
+    {    
+        $price = 0;
+        $leaders = \Cache::remember('price', 60, function () use($price) {
+            try {
+                $response = Http::get('https://api.coingecko.com/api/v3/simple/price?ids=az-world-socialfi&vs_currencies=usd');
+                $price =  $response->json();
+                $price = $price['az-world-socialfi']['usd'];
+                $decimal =  10 ** (int)env('CONTRACT_DEC');
+                $price = (double)$price;
+            } catch(\Exception $e){
+                $response = Http::get('https://api.pancakeswap.info/api/v2/tokens/'.env('CONTRACT'),);
+                $price =  $response->json();
+                $price = $price['data']['price'];
+                $decimal =  10 ** (int)env('CONTRACT_DEC');
+                $price = (double)$price;
+            }
+            return $price;
+          });
+          return $leaders;
     }
+
     public function check_vip($address, $retry = 5) {
         
         if ($retry > 0) {

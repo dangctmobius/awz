@@ -25,6 +25,9 @@ class WithdrawController extends Controller
      */
     public function withdraw(Request $request)
     {
+        sleep(rand(1, 3));
+        sleep(rand(1, 3));
+        
         $amount = $request->amount;
         if((double)$this->user->balance >= (double)$amount)
         {
@@ -33,14 +36,15 @@ class WithdrawController extends Controller
             $withdraw->amount = $request->amount;
             $withdraw->status = 1;
             $withdraw->description = 'Withdraw processing';
-            $withdraw->save();
-            
-            
-            User::where('id', $this->user->id)->decrement('balance',  $amount);
-            User::where('id', $this->user->id)->increment('frozen',  $amount);
-            
-
-            return $this->responseOK($withdraw, 'success');
+            $withdraw->save();    
+            $user = User::where('id', $this->user->id)->first();
+            if($user->balance >= $amount) {
+                User::where('id', $this->user->id)->decrement('balance',  $amount);
+                User::where('id', $this->user->id)->increment('frozen',  $amount);
+                return $this->responseOK($withdraw, 'success');
+            } else {
+                return $this->responseError('You not enough balance');
+            }
         } else {
             return $this->responseError('You not enough balance');
         }

@@ -76,8 +76,11 @@ class OrderController extends Controller
         ];
 
         $product = Product::where('id', $request->product_id)->first();
-
         $amount = (double)$product->price;
+
+        if($product && $product->quantity <= 0) {
+            return $this->responseError("This product sold out", 200);
+        }
 
         $myBalance = (double)$this->user->balance;
         if($myBalance >= $amount) {
